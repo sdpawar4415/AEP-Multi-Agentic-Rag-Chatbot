@@ -1,0 +1,60 @@
+define user express jailbreak
+  "ignore instructions"
+  "ignore previous instructions"
+  "act as system"
+  "bypass security"
+  "jailbreak"
+
+define flow jailbreak check
+  user express jailbreak
+  bot refuse
+
+define user express pii
+  regex "[0-9]{10}"
+  regex "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}"
+
+define flow pii check
+  user express pii
+  bot say "Sensitive personal information is not allowed."
+
+define user express toxicity
+  "idiot"
+  "stupid"
+  "hate"
+  "kill"
+
+define flow toxicity check
+  user express toxicity
+  bot say "Please avoid abusive or harmful language."
+
+define user express prompt injection
+  "system prompt"
+  "developer prompt"
+  "reveal prompt"
+  "show hidden instructions"
+
+define flow prompt injection check
+  user express prompt injection
+  bot refuse
+
+define user express html script
+  "<script>"
+  "</script>"
+  "<html>"
+  "javascript:"
+
+define flow html script check
+  user express html script
+  bot say "Scripts or HTML tags are not allowed."
+
+define user express intent misalignment
+  "write malware"
+  "hack system"
+  "steal password"
+
+define flow intent misalignment check
+  user express intent misalignment
+  bot refuse
+
+define flow safe response
+  bot proceed

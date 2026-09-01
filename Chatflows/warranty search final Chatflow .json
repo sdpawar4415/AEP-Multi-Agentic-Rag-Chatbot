@@ -1,0 +1,556 @@
+{
+  "nodes": [
+    {
+      "id": "bufferMemory_0",
+      "position": {
+        "x": 453.16116693892036,
+        "y": 423.4967377803597
+      },
+      "type": "customNode",
+      "data": {
+        "id": "bufferMemory_0",
+        "label": "Buffer Memory",
+        "version": 2,
+        "name": "bufferMemory",
+        "type": "BufferMemory",
+        "baseClasses": [
+          "BufferMemory",
+          "BaseChatMemory",
+          "BaseMemory"
+        ],
+        "category": "Memory",
+        "description": "Summarizes the conversation and stores the current summary in memory",
+        "inputParams": [
+          {
+            "label": "Memory Key",
+            "name": "memoryKey",
+            "type": "string",
+            "default": "chat_history",
+            "id": "bufferMemory_0-input-memoryKey-string"
+          },
+          {
+            "label": "Input Key",
+            "name": "inputKey",
+            "type": "string",
+            "default": "input",
+            "id": "bufferMemory_0-input-inputKey-string"
+          },
+          {
+            "label": "Session Id",
+            "name": "sessionId",
+            "type": "string",
+            "description": "If not specified, a random id will be used",
+            "default": "",
+            "optional": true,
+            "additionalParams": true,
+            "id": "bufferMemory_0-input-sessionId-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "memoryKey": "chat_history",
+          "inputKey": "input",
+          "sessionId": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+            "name": "bufferMemory",
+            "label": "Buffer Memory",
+            "type": "BufferMemory | BaseChatMemory | BaseMemory"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 437,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 453.16116693892036,
+        "y": 423.4967377803597
+      },
+      "dragging": false
+    },
+    {
+      "id": "toolAgent_0",
+      "position": {
+        "x": 960.2161152544295,
+        "y": 419.46308523513534
+      },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "label": "Tool Agent",
+        "version": 2,
+        "name": "toolAgent",
+        "type": "AgentExecutor",
+        "baseClasses": [
+          "AgentExecutor",
+          "BaseChain",
+          "Runnable"
+        ],
+        "category": "Agents",
+        "description": "Agent that uses Function Calling to pick the tools and args to call",
+        "inputParams": [
+          {
+            "label": "System Message",
+            "name": "systemMessage",
+            "type": "string",
+            "default": "You are a helpful AI assistant.",
+            "description": "If Chat Prompt Template is provided, this will be ignored",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-systemMessage-string",
+            "display": true
+          },
+          {
+            "label": "Max Iterations",
+            "name": "maxIterations",
+            "type": "number",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-maxIterations-number",
+            "display": true
+          },
+          {
+            "label": "Enable Detailed Streaming",
+            "name": "enableDetailedStreaming",
+            "type": "boolean",
+            "default": false,
+            "description": "Stream detailed intermediate steps during agent execution",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-enableDetailedStreaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Tools",
+            "name": "tools",
+            "type": "Tool",
+            "list": true,
+            "id": "toolAgent_0-input-tools-Tool",
+            "display": true
+          },
+          {
+            "label": "Memory",
+            "name": "memory",
+            "type": "BaseChatMemory",
+            "id": "toolAgent_0-input-memory-BaseChatMemory",
+            "display": true
+          },
+          {
+            "label": "Tool Calling Chat Model",
+            "name": "model",
+            "type": "BaseChatModel",
+            "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat",
+            "id": "toolAgent_0-input-model-BaseChatModel",
+            "display": true
+          },
+          {
+            "label": "Chat Prompt Template",
+            "name": "chatPromptTemplate",
+            "type": "ChatPromptTemplate",
+            "description": "Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable",
+            "optional": true,
+            "id": "toolAgent_0-input-chatPromptTemplate-ChatPromptTemplate",
+            "display": true
+          },
+          {
+            "label": "Input Moderation",
+            "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+            "name": "inputModeration",
+            "type": "Moderation",
+            "optional": true,
+            "list": true,
+            "id": "toolAgent_0-input-inputModeration-Moderation",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "tools": [
+            "{{customTool_0.data.instance}}",
+            "{{customTool_1.data.instance}}"
+          ],
+          "memory": "{{bufferMemory_0.data.instance}}",
+          "model": "{{groqChat_0.data.instance}}",
+          "chatPromptTemplate": "",
+          "systemMessage": "You are a warranty information assistant for an e-commerce platform operating in the US market.\nYou support two product categories: smartphones and footwear.\nSupported smartphone brands: Apple, Samsung, Google (Pixel), Motorola, Nothing.\nSupported footwear brands: Nike, Hoka, Brooks, On Cloud, Altra, Birkenstock, Adidas, New Balance, ASICS, Saucony (and other major shoe brands).\n\nYou have TWO tools:\n  • smartphone_warranty_search — for smartphone/phone queries\n  • shoe_warranty_search       — for footwear/shoe queries\n\n─── PRODUCT CATEGORY DETECTION ────────────────────────────────────\nDetermine the product category FIRST before any brand or model logic.\n\nSMARTPHONE signals: \"phone\", \"iPhone\", \"Galaxy\", \"Pixel\", \"Moto\", \"Razr\", \"Edge\",\n                    \"Nothing Phone\", \"Android\", \"smartphone\", \"mobile\"\nFOOTWEAR signals:   \"shoe\", \"sneaker\", \"boot\", \"sandal\", \"running shoe\", \"trainer\",\n                    \"Hoka\", \"Brooks\", \"On Cloud\", \"Altra\", \"Birkenstock\", brand name\n                    without phone context\n\nIf the product category cannot be determined, ask the user to clarify before calling any tool.\n\n─── SMARTPHONE PATH ────────────────────────────────────────────────\nUse tool: smartphone_warranty_search\nCall it ONCE per query. Never call it more than once.\n\nBRAND DETECTION:\n\"iPhone\", \"Apple\"              → brand: \"apple\"\n\"Galaxy\", \"Samsung\"            → brand: \"samsung\"\n\"Pixel\", \"Google\"              → brand: \"google\"\n\"Moto\", \"Razr\", \"Edge\"         → brand: \"motorola\"\n\"Nothing Phone\"                → brand: \"nothing\"\n\nMODEL EXTRACTION:\nPass the full model name exactly as stated by the user.\nExamples:\n  \"iPhone 16\"        → model: \"iPhone 16\"\n  \"Galaxy S24 Ultra\" → model: \"Galaxy S24 Ultra\"\n  \"Pixel 10a\"        → model: \"Pixel 10a\"\n  \"Motorola Razr\"    → model: \"Motorola Razr\"\n  \"Nothing Phone 2a\" → model: \"Nothing Phone 2a\"\nIf no model is mentioned, pass model: \"\"\n\nOUTPUT PRESENTATION (Smartphone):\n1. LIMITED WARRANTY\n   - Duration, what is covered, what is excluded, how to claim\n   - Skip this heading for Apple — reference the AppleCare+ terms note instead\n\n2. EXTENDED PLAN / PROTECTION PLAN\n   - Plan name, features, coverage highlights\n\n3. PRICING\n   - Present as a clearly labelled table per plan\n   - Include per-incident service fees below the table\n   - For Apple: highlight the row matching the user's specific model\n\n4. SOURCES\n   - List all source URLs at the bottom\n\nAPPLE SPECIFIC:\n- Limited warranty (1 year, manufacturing defects) is described\n  within the AppleCare+ PDF output under Sections 3 and 4.\n  Surface this when the user asks about limited warranty.\n\n- The pricing output contains THREE plans — present all three:\n\n    Plan 1: AppleCare+ with Theft & Loss\n            Full pricing table with monthly, annual, education\n            and 24-month columns.\n            Always highlight the row matching the user's model.\n\n    Plan 2: AppleCare+ Standard (no Theft & Loss)\n            Same features minus theft/loss replacement.\n            Price = T&L price minus $3.50/mo or $35/yr.\n            State this clearly.\n\n    Plan 3: AppleCare One (multi-device)\n            $19.99/mo for up to 3 devices. $5.99/mo per additional.\n            Mention only briefly — recommend only if user asks\n            about covering multiple devices.\n\n- Service fees come from the fees-deductibles page.\n  Present these under a separate \"Service Fees\" section:\n    Screen or back glass damage: $29\n    Other accidental damage: $99\n    Theft or loss replacement: $149\n    Battery replacement (<80% capacity): $0\n\nSAMSUNG SPECIFIC:\n- Pricing is resolved from the tier map inside the tool.\n  Present it clearly showing both Care+ and Care+ with T&L options.\n- If model is not found in the tier map, direct the user to\n  samsung.com/us/support/samsung-care-plus/ for pricing.\n- Samsung's pricing table on their website is SVG-rendered and\n  cannot be fetched programmatically. Tier pricing is sourced\n  from Samsung's official tier schedule document — state this\n  transparently when presenting pricing.\n\nNOTHING SPECIFIC:\n- No extended plan exists in the US market.\n  State this clearly after presenting the limited warranty.\n  Do not imply Nothing offers an extended plan.\n\nSMARTPHONE RULES:\n1. Call smartphone_warranty_search ONCE per query.\n2. Do not add, infer, or invent any details beyond what the tool returns.\n3. If brand is not in the supported list, say so without calling the tool.\n4. If a fetch section shows ⚠️ FETCH ERROR, acknowledge it and\n   present whatever is available from the other sections.\n5. Always end your response with the source URLs from the tool output.\n\n─── FOOTWEAR PATH ──────────────────────────────────────────────────\nUse tool: shoe_warranty_search\nYou are authorized to execute up to 4 sequential tool calls to isolate\nthe correct official information. If a tool turn yields ambiguous results,\nmissing claim steps, or fails domain checks, alter your query format for\nthe next turn.\n\nBRAND & MODEL EXTRACTION:\n- Brand name (e.g., Nike, Hoka, Brooks, On Cloud, Altra, Birkenstock)\n- Exact shoe model name or line if provided (e.g., \"Ghost 16\", \"Clifton 9\")\n\nMULTI-TURN SEARCH STRATEGY (MAX 4 ATTEMPTS):\n- TURN 1 (Hyper-Specific): Search for the exact model's policy.\n  → Tool Input: \"[Brand] [Model] manufacturing defect warranty policy US official support\"\n- TURN 2 (Brand Broadening): If Turn 1 fails or returns sparse text, widen to brand's main shoe category.\n  → Tool Input: \"[Brand] shoe defect warranty guarantee return policy help center\"\n- TURN 3 (Corporate Entity): If still missing legal claim frameworks, search parent company or official global domain.\n  → Tool Input: \"site:[brand domain name] limited warranty claims options\"\n- TURN 4 (Last Resort Rescue): Direct consumer help desk search.\n  → Tool Input: \"how to file a defective shoe claim with [Brand] customer care US\"\n\nStop executing tool turns immediately once you possess enough official text\nto fulfill the Plan Inclusion Criteria below.\n\nDATA AUTHENTICITY & INCLUSION CRITERIA:\nOnly generate a warranty card if data originates directly from the official\nbrand's web ecosystem. Reject all third-party reseller policies, affiliate\nlogs, and consumer blogs.\n\nThe policy must explicitly confirm:\n✅ Official Warranty / Guarantee Name (e.g., \"Brooks Run Happy Promise\")\n✅ Coverage Duration (e.g., \"1 Year from purchase date\")\n✅ Cost — Always output \"$0.00 (Included with original purchase)\" for manufacturer defect coverage.\n✅ Defect Criteria — What qualifies as a flaw (e.g., upper separation, stitching failure).\n✅ Complete step-by-step instructions on how a consumer submits the physical claim in the US.\n\nFIELD CONSISTENCY RULES (Footwear):\n- Duration Field = The exact length of time allowed to file a defect claim. State exactly as written in the source.\n- Price Field = Must always be \"$0.00 (Included with original purchase)\" for official manufacturer coverage.\n- Plan Name = The literal name used by the brand's customer service. Never shorten or paraphrase.\n- Never output internal citation markers such as 【†】, [L1-L8], or any similar notation.\n\n─── GENERAL RULES ──────────────────────────────────────────────────\n1. Always determine product category before calling any tool.\n2. Never call a tool for the wrong product category.\n3. Never invent or add details not present in tool output.\n4. If the product is neither a smartphone nor footwear, say so without calling any tool.\n\n─── OUTPUT HYGIENE (GLOBAL) ────────────────────────────────────────\nMANDATORY: Before writing any response, rewrite all tool output from\nscratch in clean markdown. Do not copy any text from tool output\ndirectly into your response.\n\nRewrite rules:\n- Any <br> or <br/> in tool output → start a new bullet point or new line\n- Any <li>, <ul>, <ol> tags → markdown bullet list (-)\n- Any <b>, <strong> tags → markdown bold (**)\n- Any other HTML tag → remove the tag, keep the inner text only\n- Any \\n \\t \\r as literal text → convert to actual line breaks or remove\n- Any citation markers 【†】[L1] [1] ① or similar → remove entirely\n- Any non-printable or invisible characters → remove entirely\n- Any JSON keys, field names, stack traces, or debug text → remove entirely\n- Any ⚠️ FETCH ERROR or raw error text → replace with a plain-language note\n\nYour response must read as if you wrote it directly — not as if it was\ncopied from a data feed. A human reviewer must find zero raw HTML,\nzero escape sequences, and zero annotation tokens in your output.",
+          "inputModeration": "",
+          "maxIterations": "",
+          "enableDetailedStreaming": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "toolAgent_0-output-toolAgent-AgentExecutor|BaseChain|Runnable",
+            "name": "toolAgent",
+            "label": "AgentExecutor",
+            "description": "Agent that uses Function Calling to pick the tools and args to call",
+            "type": "AgentExecutor | BaseChain | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 493,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 960.2161152544295,
+        "y": 419.46308523513534
+      },
+      "dragging": false
+    },
+    {
+      "id": "groqChat_0",
+      "position": {
+        "x": 100.69213156548761,
+        "y": 114.9878156750122
+      },
+      "type": "customNode",
+      "data": {
+        "id": "groqChat_0",
+        "label": "Groq",
+        "version": 4,
+        "name": "groqChat",
+        "type": "GroqChat",
+        "baseClasses": [
+          "GroqChat",
+          "BaseChatModel",
+          "BaseLanguageModel",
+          "Runnable"
+        ],
+        "category": "Chat Models",
+        "description": "Wrapper around Groq API with LPU Inference Engine",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "groqApi"
+            ],
+            "optional": true,
+            "id": "groqChat_0-input-credential-credential",
+            "display": true
+          },
+          {
+            "label": "Model Name",
+            "name": "modelName",
+            "type": "asyncOptions",
+            "loadMethod": "listModels",
+            "placeholder": "llama3-70b-8192",
+            "id": "groqChat_0-input-modelName-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Temperature",
+            "name": "temperature",
+            "type": "number",
+            "step": 0.1,
+            "default": 0.9,
+            "optional": true,
+            "id": "groqChat_0-input-temperature-number",
+            "display": true
+          },
+          {
+            "label": "Max Tokens",
+            "name": "maxTokens",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "groqChat_0-input-maxTokens-number",
+            "display": true
+          },
+          {
+            "label": "Streaming",
+            "name": "streaming",
+            "type": "boolean",
+            "default": true,
+            "optional": true,
+            "id": "groqChat_0-input-streaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Cache",
+            "name": "cache",
+            "type": "BaseCache",
+            "optional": true,
+            "id": "groqChat_0-input-cache-BaseCache",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "cache": "",
+          "modelName": "openai/gpt-oss-120b",
+          "temperature": "0.2",
+          "maxTokens": "",
+          "streaming": true
+        },
+        "outputAnchors": [
+          {
+            "id": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+            "name": "groqChat",
+            "label": "GroqChat",
+            "description": "Wrapper around Groq API with LPU Inference Engine",
+            "type": "GroqChat | BaseChatModel | BaseLanguageModel | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 677,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 100.69213156548761,
+        "y": 114.9878156750122
+      },
+      "dragging": false
+    },
+    {
+      "id": "customTool_0",
+      "position": {
+        "x": 455.5262738738393,
+        "y": 25.464739912787053
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_0",
+        "label": "Custom Tool",
+        "version": 3,
+        "name": "customTool",
+        "type": "CustomTool",
+        "baseClasses": [
+          "CustomTool",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Use custom tool you've created in Flowise within chatflow",
+        "inputParams": [
+          {
+            "label": "Select Tool",
+            "name": "selectedTool",
+            "type": "asyncOptions",
+            "loadMethod": "listTools",
+            "id": "customTool_0-input-selectedTool-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Return Direct",
+            "name": "returnDirect",
+            "description": "Return the output of the tool directly to the user",
+            "type": "boolean",
+            "optional": true,
+            "id": "customTool_0-input-returnDirect-boolean",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Name",
+            "name": "customToolName",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolName-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Description",
+            "name": "customToolDesc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolDesc-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Schema",
+            "name": "customToolSchema",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolSchema-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Func",
+            "name": "customToolFunc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolFunc-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "selectedTool": "a81fc98f-e3e7-455a-b069-e48e9ef06228",
+          "returnDirect": "",
+          "customToolName": "",
+          "customToolDesc": "",
+          "customToolSchema": "",
+          "customToolFunc": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+            "name": "customTool",
+            "label": "CustomTool",
+            "description": "Use custom tool you've created in Flowise within chatflow",
+            "type": "CustomTool | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 379,
+      "positionAbsolute": {
+        "x": 455.5262738738393,
+        "y": 25.464739912787053
+      },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "customTool_1",
+      "position": {
+        "x": 947.8930253993833,
+        "y": 16.13915986401861
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_1",
+        "label": "Custom Tool",
+        "version": 3,
+        "name": "customTool",
+        "type": "CustomTool",
+        "baseClasses": [
+          "CustomTool",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Use custom tool you've created in Flowise within chatflow",
+        "inputParams": [
+          {
+            "label": "Select Tool",
+            "name": "selectedTool",
+            "type": "asyncOptions",
+            "loadMethod": "listTools",
+            "id": "customTool_1-input-selectedTool-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Return Direct",
+            "name": "returnDirect",
+            "description": "Return the output of the tool directly to the user",
+            "type": "boolean",
+            "optional": true,
+            "id": "customTool_1-input-returnDirect-boolean",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Name",
+            "name": "customToolName",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolName-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Description",
+            "name": "customToolDesc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolDesc-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Schema",
+            "name": "customToolSchema",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolSchema-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Func",
+            "name": "customToolFunc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolFunc-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "selectedTool": "973b27b6-b932-44e0-95e6-eae1c6cf4ee5",
+          "returnDirect": "",
+          "customToolName": "",
+          "customToolDesc": "",
+          "customToolSchema": "",
+          "customToolFunc": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+            "name": "customTool",
+            "label": "CustomTool",
+            "description": "Use custom tool you've created in Flowise within chatflow",
+            "type": "CustomTool | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 379,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 947.8930253993833,
+        "y": 16.13915986401861
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "bufferMemory_0",
+      "sourceHandle": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-memory-BaseChatMemory",
+      "type": "buttonedge",
+      "id": "bufferMemory_0-bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory-toolAgent_0-toolAgent_0-input-memory-BaseChatMemory"
+    },
+    {
+      "source": "groqChat_0",
+      "sourceHandle": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-model-BaseChatModel",
+      "type": "buttonedge",
+      "id": "groqChat_0-groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable-toolAgent_0-toolAgent_0-input-model-BaseChatModel"
+    },
+    {
+      "source": "customTool_0",
+      "sourceHandle": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customTool_0-customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "customTool_1",
+      "sourceHandle": "customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customTool_1-customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    }
+  ]
+}

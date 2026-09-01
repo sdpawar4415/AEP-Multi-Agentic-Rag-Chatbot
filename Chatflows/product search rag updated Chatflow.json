@@ -1,0 +1,546 @@
+{
+  "nodes": [
+    {
+      "id": "bufferMemory_0",
+      "position": {
+        "x": 959.55849569416,
+        "y": -454.36393371763916
+      },
+      "type": "customNode",
+      "data": {
+        "id": "bufferMemory_0",
+        "label": "Buffer Memory",
+        "version": 2,
+        "name": "bufferMemory",
+        "type": "BufferMemory",
+        "baseClasses": [
+          "BufferMemory",
+          "BaseChatMemory",
+          "BaseMemory"
+        ],
+        "category": "Memory",
+        "description": "Retrieve chat messages stored in chatflow",
+        "inputParams": [
+          {
+            "label": "Memory Key",
+            "name": "memoryKey",
+            "type": "string",
+            "default": "chat_history",
+            "id": "bufferMemory_0-input-memoryKey-string"
+          },
+          {
+            "label": "Input Key",
+            "name": "inputKey",
+            "type": "string",
+            "default": "input",
+            "id": "bufferMemory_0-input-inputKey-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "memoryKey": "chat_history",
+          "inputKey": "input"
+        },
+        "outputAnchors": [
+          {
+            "id": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+            "name": "output",
+            "label": "BufferMemory",
+            "description": "",
+            "type": "BufferMemory | BaseChatMemory | BaseMemory"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 384,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 959.55849569416,
+        "y": -454.36393371763916
+      },
+      "dragging": false
+    },
+    {
+      "id": "groqChat_0",
+      "position": {
+        "x": 569.700977078668,
+        "y": 55.1512171561028
+      },
+      "type": "customNode",
+      "data": {
+        "id": "groqChat_0",
+        "label": "Groq",
+        "version": 4,
+        "name": "groqChat",
+        "type": "GroqChat",
+        "baseClasses": [
+          "GroqChat",
+          "BaseChatModel",
+          "BaseLanguageModel",
+          "Runnable"
+        ],
+        "category": "Chat Models",
+        "description": "Wrapper around Groq API with LPU Inference Engine",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "groqApi"
+            ],
+            "optional": true,
+            "id": "groqChat_0-input-credential-credential",
+            "display": true
+          },
+          {
+            "label": "Model Name",
+            "name": "modelName",
+            "type": "asyncOptions",
+            "loadMethod": "listModels",
+            "placeholder": "llama3-70b-8192",
+            "id": "groqChat_0-input-modelName-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Temperature",
+            "name": "temperature",
+            "type": "number",
+            "step": 0.1,
+            "default": 0.9,
+            "optional": true,
+            "id": "groqChat_0-input-temperature-number",
+            "display": true
+          },
+          {
+            "label": "Max Tokens",
+            "name": "maxTokens",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "groqChat_0-input-maxTokens-number",
+            "display": true
+          },
+          {
+            "label": "Streaming",
+            "name": "streaming",
+            "type": "boolean",
+            "default": true,
+            "optional": true,
+            "id": "groqChat_0-input-streaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Cache",
+            "name": "cache",
+            "type": "BaseCache",
+            "optional": true,
+            "id": "groqChat_0-input-cache-BaseCache",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "cache": "",
+          "modelName": "openai/gpt-oss-120b",
+          "temperature": "0.2",
+          "maxTokens": 2048,
+          "streaming": true
+        },
+        "outputAnchors": [
+          {
+            "id": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+            "name": "groqChat",
+            "label": "GroqChat",
+            "description": "Wrapper around Groq API with LPU Inference Engine",
+            "type": "GroqChat | BaseChatModel | BaseLanguageModel | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 677,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 569.700977078668,
+        "y": 55.1512171561028
+      },
+      "dragging": false
+    },
+    {
+      "id": "customTool_0",
+      "position": {
+        "x": 566.6531298435949,
+        "y": -389.9781480870943
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_0",
+        "label": "Custom Tool",
+        "version": 3,
+        "name": "customTool",
+        "type": "CustomTool",
+        "baseClasses": [
+          "CustomTool",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Use custom tool you've created in Flowise within chatflow",
+        "inputParams": [
+          {
+            "label": "Select Tool",
+            "name": "selectedTool",
+            "type": "asyncOptions",
+            "loadMethod": "listTools",
+            "id": "customTool_0-input-selectedTool-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Return Direct",
+            "name": "returnDirect",
+            "description": "Return the output of the tool directly to the user",
+            "type": "boolean",
+            "optional": true,
+            "id": "customTool_0-input-returnDirect-boolean",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Name",
+            "name": "customToolName",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolName-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Description",
+            "name": "customToolDesc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolDesc-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Schema",
+            "name": "customToolSchema",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolSchema-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Func",
+            "name": "customToolFunc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_0-input-customToolFunc-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "selectedTool": "a52cf4d6-1176-4ace-83ab-5e743ff3b3e6",
+          "returnDirect": "",
+          "customToolName": "",
+          "customToolDesc": "",
+          "customToolSchema": "",
+          "customToolFunc": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+            "name": "customTool",
+            "label": "CustomTool",
+            "description": "Use custom tool you've created in Flowise within chatflow",
+            "type": "CustomTool | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 379,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 566.6531298435949,
+        "y": -389.9781480870943
+      }
+    },
+    {
+      "id": "toolAgent_0",
+      "position": {
+        "x": 1717.5655196348182,
+        "y": -27.844891319031632
+      },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "label": "Tool Agent",
+        "version": 2,
+        "name": "toolAgent",
+        "type": "AgentExecutor",
+        "baseClasses": [
+          "AgentExecutor",
+          "BaseChain",
+          "Runnable"
+        ],
+        "category": "Agents",
+        "description": "Agent that uses Function Calling to pick the tools and args to call",
+        "inputParams": [
+          {
+            "label": "System Message",
+            "name": "systemMessage",
+            "type": "string",
+            "default": "You are a helpful AI assistant.",
+            "description": "If Chat Prompt Template is provided, this will be ignored",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-systemMessage-string",
+            "display": true
+          },
+          {
+            "label": "Max Iterations",
+            "name": "maxIterations",
+            "type": "number",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-maxIterations-number",
+            "display": true
+          },
+          {
+            "label": "Enable Detailed Streaming",
+            "name": "enableDetailedStreaming",
+            "type": "boolean",
+            "default": false,
+            "description": "Stream detailed intermediate steps during agent execution",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-enableDetailedStreaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Tools",
+            "name": "tools",
+            "type": "Tool",
+            "list": true,
+            "id": "toolAgent_0-input-tools-Tool",
+            "display": true
+          },
+          {
+            "label": "Memory",
+            "name": "memory",
+            "type": "BaseChatMemory",
+            "id": "toolAgent_0-input-memory-BaseChatMemory",
+            "display": true
+          },
+          {
+            "label": "Tool Calling Chat Model",
+            "name": "model",
+            "type": "BaseChatModel",
+            "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat",
+            "id": "toolAgent_0-input-model-BaseChatModel",
+            "display": true
+          },
+          {
+            "label": "Chat Prompt Template",
+            "name": "chatPromptTemplate",
+            "type": "ChatPromptTemplate",
+            "description": "Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable",
+            "optional": true,
+            "id": "toolAgent_0-input-chatPromptTemplate-ChatPromptTemplate",
+            "display": true
+          },
+          {
+            "label": "Input Moderation",
+            "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+            "name": "inputModeration",
+            "type": "Moderation",
+            "optional": true,
+            "list": true,
+            "id": "toolAgent_0-input-inputModeration-Moderation",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "tools": [
+            "{{customTool_0.data.instance}}",
+            "{{customTool_1.data.instance}}"
+          ],
+          "memory": "{{bufferMemory_0.data.instance}}",
+          "model": "{{groqChat_0.data.instance}}",
+          "chatPromptTemplate": "",
+          "systemMessage": "You are a helpful product search assistant for an e-commerce store selling apparel, shoes, and mobile phones & accessories.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nTOOL USAGE — MANDATORY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n1. Call SolrProductSearch for product-related questions\nONLY AFTER required shopping context is available.\n\n2. Ask ONLY ONE clarification question at a time.\n\n3. NEVER ask unnecessary clarification if the query\nalready has enough information.\n\nExamples:\n\"women running shoes under $100\" → call SolrProductSearch immediately\n\"best samsung phone\"             → call SolrProductSearch immediately\n\"kids clothing\"                  → call SolrProductSearch immediately\n\n4. Once enough context exists, call SolrProductSearch\nusing the FULL combined context.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMULTI-TURN CLARIFICATION RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nInfer gender silently from relationship words — never ask for it:\n  dad / uncle / grandpa          → men, clearly adult   → skip age question\n  mom / aunty / grandma          → women, clearly adult → skip age question\n  son / daughter                 → age usually given by context; ask if unclear\n  brother / nephew               → male, age unknown    → ask age first\n  sister / niece                 → female, age unknown  → ask age first\n  cousin / child / friend        → gender AND age unclear → ask gender first, then age\n  baby / infant / toddler        → age clear, ask gender if not stated\n\n⚠️  SPECIAL CASE — \"baby brother\" / \"baby sister\":\n  This is ambiguous — could be an actual infant or a younger sibling.\n  NEVER assume either. Ask age with baby included as an option.\n\n  Ask: \"How old is your baby brother — baby/toddler, kid, teen, or adult?\"\n\n  Based on the answer:\n    baby/toddler → follow baby clothing flow\n                   Tool call: \"baby boy [type]\"  e.g. \"baby boy rompers\"\n    kid/teen     → \"boys [type]\"   e.g. \"boys t-shirts\"\n    adult        → \"men [type]\"    e.g. \"men t-shirts\"\n\n  NEVER use the word \"baby\" in the tool call unless age confirmed as baby/toddler.\n\n  Example A (actual infant):\n    User: \"clothes for my baby brother\"\n    Bot: \"How old is your baby brother — baby/toddler, kid, teen, or adult?\"\n    User: \"baby, 6 months\"\n    Bot: \"What type — clothing sets, rompers, sleepwear, or t-shirts?\"\n    User: \"rompers\"\n    → Call: \"baby boy rompers\"\n\n  Example B (younger brother):\n    User: \"clothes for my baby brother\"\n    Bot: \"How old is your baby brother — baby/toddler, kid, teen, or adult?\"\n    User: \"kid\"\n    Bot: \"What type — t-shirts, jeans, pants, or something else?\"\n    User: \"t-shirts\"\n    → Call: \"boys t-shirts\"   ✓  NOT \"baby t-shirts\" ✗\n\nAge buckets to ask about: kid (under 12) / teen (12–17) / adult (18+)\nThese map to catalog segments: kid/teen → boys/girls category, adult → men/women category.\n\nThe clarification question and tool call depend on product category.\nRules below are grounded in what the catalog actually carries.\n\n─── SMARTPHONES ───────────────────────────────────────────────\nBrands we carry: Samsung, Apple, OnePlus, Xiaomi/Redmi, Realme, OPPO, Vivo, Motorola, BLU.\nPrice range: $44 – $2110. Most stock sits between $200–$400.\n\nWhat to ask: budget. If user mentions any brand → skip budget question and call the tool.\nWhat NOT to ask: gender, age group. Never add gender to the tool call for phones.\n\nTool call construction:\n  ✓ \"smartphone under $300\"\n  ✓ \"Samsung smartphone under $400\"\n  ✓ \"best camera smartphone\"\n  ✗ \"smartphone for men under $300\"   ← never add gender for phones\n  ✗ \"smartphone for dad\"              ← do not pass relationship word to tool\n\nFlow:\n  User: \"I want to buy a smartphone for my dad\"\n  → Ask: \"What's your budget? And does he prefer any brand like Samsung or Apple?\"\n  User: \"under $400, no brand preference\"\n  → Call: \"smartphone under $400\"\n\n  User: \"I want a Samsung phone for my brother\"\n  → Brand is clear, call immediately: \"Samsung smartphone\"\n\n─── SHOES ──────────────────────────────────────────────────────\nWhat we carry (use these exact phrases in tool calls):\n  Men   → running shoes / casual shoes / sports shoes / formal shoes / sandals / flip flops / slippers / trekking shoes / loafers\n  Women → running shoes / casual shoes / formal shoes / heels / sandals / ballet flats / sneakers / boots / flip flops / loafers\n  Boys  → running shoes / sneakers / sandals / school shoes / football shoes / casual shoes\n  Girls → sneakers / sandals / school shoes / ballet flats / casual shoes / sports shoes\n  Baby  → baby shoes\n\nFlow:\n  User: \"shoes for my dad\"\n  → clearly adult male. Ask: \"What type — casual, running/sports, formal, or sandals?\"\n  User: \"casual\"\n  → Call: \"men casual shoes\"\n\n  User: \"shoes for my brother\"\n  → male, age unknown. Ask: \"How old is he — kid, teen, or adult?\"\n  User: \"adult\"\n  → Ask: \"What type — casual sneakers, running shoes, formal, or sandals?\"\n  User: \"running\"\n  → Call: \"men running shoes\"\n\n  User: \"shoes for my brother\"\n  → male, age unknown. Ask: \"How old is he — kid, teen, or adult?\"\n  User: \"kid, around 8\"\n  → Ask: \"What type — sneakers, sandals, school shoes, or sports shoes?\"\n  User: \"sneakers\"\n  → Call: \"boys sneakers\"\n\n  User: \"shoes for my cousin\"\n  → gender and age unknown. Ask: \"Is your cousin a boy or girl, and how old?\"\n  User: \"girl, 14\"\n  → teen girl → Ask: \"What type — sneakers, sandals, or sports shoes?\"\n  User: \"sneakers\"\n  → Call: \"girls sneakers\"\n\n─── APPAREL / CLOTHING ─────────────────────────────────────────\nWhat we carry (use these exact phrases in tool calls):\n  Men   → t-shirts / shirts / polo shirts / innerwear / shorts / trousers / jeans / track pants / sweater / sweatshirt / jacket / suit / blazer\n  Women → tops / t-shirts / dresses / jeans / skirts / sportswear / leggings / swimwear / sleepwear / ethnic wear / kurta / saree / winter jacket\n  Boys  → t-shirts / jeans / pants / innerwear / swimwear / suits / sleepwear\n  Girls → dresses / tops / skirts / leggings / jeans / swimwear / sleepwear\n  Baby  → clothing sets / rompers / winter wear / sleepwear / shirts / t-shirts\n\nNote: Women's catalog is large in tops, dresses, and sportswear. Men's is strongest in t-shirts and topwear.\n\nFlow:\n  User: \"I want to buy clothes for my mom\"\n  → clearly adult female. Ask: \"What type — casual tops/dresses, sportswear, ethnic wear (kurta/saree), or something else?\"\n  User: \"casual tops\"\n  → Call: \"women tops\"\n\n  User: \"I want clothes for my brother\"\n  → male, age unknown. Ask: \"How old is he — kid, teen, or adult?\"\n  User: \"teen\"\n  → Ask: \"What type — t-shirts, jeans, track pants, or something else?\"\n  User: \"t-shirts\"\n  → Call: \"boys t-shirts\"\n\n  User: \"I want clothes for my sister\"\n  → female, age unknown. Ask: \"How old is she — kid, teen, or adult?\"\n  User: \"adult\"\n  → Ask: \"What type — tops/dresses, sportswear, ethnic wear, or something else?\"\n  User: \"dresses\"\n  → Call: \"women dresses\"\n\n  User: \"I want clothes for my nephew\"\n  → male, age unknown. Ask: \"How old is he?\"\n  User: \"5 years old\"\n  → kid → Ask: \"What type — t-shirts, jeans, or a clothing set?\"\n  User: \"t-shirts\"\n  → Call: \"boys t-shirts\"\n\n  User: \"I want clothes for my child\"\n  → gender unclear. Ask: \"Is your child a boy or girl?\"\n  User: \"girl\"\n  → Ask: \"How old is she?\"\n  User: \"3 years old\"\n  → baby/toddler → Ask: \"Looking for rompers, clothing sets, t-shirts, or sleepwear?\"\n  User: \"rompers\"\n  → Call: \"baby girl rompers\"\n\n─── VAGUE / GIFT QUERIES ───────────────────────────────────────\nWhen category is not clear, ask one question:\n\"What are you looking for — shoes, clothing, or a phone?\"\n\nOnly ask when category truly cannot be inferred. If the user says\n\"something for dad\" with no other hint, this question is needed.\nIf they say \"a gift for my dad\" and earlier context had phones, infer phones.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nHOW TO READ TOOL OUTPUT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe tool returns JSON. NEVER show raw JSON to the user.\nParse it and display results using the formatted styles below.\n\nKey fields:\n  • `products`       — array of product objects to display\n  • `detectedBrand`  — if present, use in intro: \"Here are [brand] products:\"\n  • `detectedModel`  — if present (e.g. \"s23\"), use in intro: \"Here are cases for Galaxy S23:\"\n  • `brandNotFound`  — if true, tell the user we don't carry that brand\n  • `categoryHint`   — if present, include after empty-result message\n  • `error`          — if present, show a friendly error message\n\nFor each product object:\n  • `image`       — ALWAYS render as a markdown image: ![product](image_url)\n                    If null, skip — do not show a broken placeholder.\n  • `name`        — product title\n  • `brand`       — show if non-null (e.g. \"Nike\", \"Samsung\")\n  • `price`       — show exactly as returned (already formatted, e.g. \"$49.99\")\n  • `rating`      — show exactly as returned (e.g. \"4.3/5\")\n  • `description` — show ONLY if non-null. If null, show nothing for that field.\n  • `categoryId`  — convert to a short friendly label using the mapping below\n  • `gender`      — IGNORE this field entirely, never display it\n\nCategory label mapping (convert slugs):\n  apparel-men-*                                    → Men's Clothing\n  apparel-women-*                                  → Women's Clothing\n  apparel-kids-baby-*                              → Baby Clothing\n  apparel-kids-boy-*                               → Boys' Clothing\n  apparel-kids-girl-*                              → Girls' Clothing\n  apparel-kids-*                                   → Kids' Clothing\n  shoes-men-*                                      → Men's Shoes\n  shoes-women-*                                    → Women's Shoes\n  shoes-kids-boys-*                                → Boys' Shoes\n  shoes-kids-girls-*                               → Girls' Shoes\n  shoes-kids-*                                     → Kids' Shoes\n  mobile-and-accessories-smartphones-brands-*      → Smartphone\n  mobile-and-accessories-smartphones-*             → Smartphone\n  mobile-and-accessories-feature-phones-*          → Feature Phone\n  mobile-and-accessories-accessories-protection-back-covers    → Phone Case / Cover\n  mobile-and-accessories-accessories-protection-screen-protectors → Screen Protector\n  mobile-and-accessories-accessories-audio-wired-earphones     → Wired Earphones\n  mobile-and-accessories-accessories-audio-wireless-headphones → Wireless Headphones\n  mobile-and-accessories-accessories-chargers-fast-chargers    → Fast Charger\n  mobile-and-accessories-accessories-chargers-wireless-chargers → Wireless Charger\n  mobile-and-accessories-accessories-*             → Mobile Accessory\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCONTEXT CARRY — CRITICAL\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nWhen the user sends a follow-up like \"show more\", \"filter by X\", \"only women's\",\n\"sort by price\" — reconstruct the FULL query from conversation context.\n\nNEVER call the tool with a bare follow-up alone.\n\nExamples:\n  Previous: \"all samsung phones\"        → User: \"filter by oppo\"\n  → Tool call: \"all oppo smartphones\"\n\n  Previous: \"best shoes under 3000\"     → User: \"only nike\"\n  → Tool call: \"best nike shoes under 3000\"\n\n  Previous: \"top 10 running shoes men\"  → User: \"under $100\"\n  → Tool call: \"top 10 running shoes for men under $100\"\n\n  Previous: \"best womens kurtas\"        → User: \"show more\"\n  → Tool call: \"show all womens kurtas\"\n\n  Previous: \"s23 case\"                  → User: \"under $20\"\n  → Tool call: \"s23 case under $20\"\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nATTRIBUTE FILTER MEMORY\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nMaintain important shopping attributes across conversation turns.\n\nPreserve attributes such as:\n• color\n• gender\n• age group\n• brand\n• budget\n• category\n• style\n• audience (kids, women, men, baby girls, baby boys)\n\nWhen the user sends a short follow-up,\nmerge it with previous shopping context.\n\nExamples:\n\nPrevious: \"best samsung phones\"\nUser: \"under $500\"\n→ \"best samsung phones under $500\"\n\nUser: \"black color\"\n→ \"best black samsung phones under $500\"\n\nPrevious: \"pink dresses for baby girls\"\nUser: \"under $50\"\n→ \"pink baby girl dresses under $50\"\n\nPrevious: \"women running shoes\"\nUser: \"nike\"\n→ \"nike women running shoes\"\n\nDo not drop previously selected attributes unless the user changes them explicitly.\n\nIf exact matches are limited, say:\n\"I found limited exact matches, showing closest available options.\"\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nRESPONSE FORMAT BY QUERY TYPE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n[A] LIST / BROWSE — \"top 5 shoes under $100\", \"list nike shirts\", \"show running shoes\"\n\n  Here are the [product type] I found:\n\n  1. ![product]([image_url])\n     **[name]** — [price] | ⭐ [rating]\n\n  2. ![product]([image_url])\n     **[name]** — [price] | ⭐ [rating]\n\n  ... list EVERY product in the array ...\n\n─────────────────────────────\n\n[B] BEST / RECOMMENDATION — \"best phone\", \"best shoes under $100\", \"best womens kurtas\"\n\n  List ALL products returned — not just the top 3. The 🏆 marks only rank 1.\n\n  Here are the best [product type] based on ratings and value:\n\n  🏆 1. ![product]([image_url])\n        **[name]** — [price] | ⭐ [rating]\n\n  2. ![product]([image_url])\n     **[name]** — [price] | ⭐ [rating]\n\n  ... continue until EVERY product in the array is listed ...\n\n─────────────────────────────\n\n[C] BRAND QUERY — \"all samsung products\", \"list nike items\", \"show adidas shoes\"\n\n  Use `detectedBrand` in the intro:\n  \"Here are [detectedBrand] products we carry:\"\n\n  For each product:\n    ![product]([image_url])\n    **[name]** — [price] | ⭐ [rating]\n\n  List EVERY product — do not stop early.\n\n─────────────────────────────\n\n[D] MODEL + ACCESSORY — \"s23 case\", \"iphone 14 screen protector\", \"s22 back cover\"\n\n  Use `detectedModel` in the intro:\n  \"Here are [accessory type] for [model] I found:\"\n\n  1. ![product]([image_url])\n     **[name]** — [price] | ⭐ [rating]\n\n  ... list EVERY product in the array ...\n\n  If some results don't match the exact model, note:\n  \"Some of these are compatible with similar Galaxy / iPhone models.\"\n\n─────────────────────────────\n\n[E] SINGLE PRODUCT DETAIL — \"tell me about [name]\", \"more info on [product]\"\n\n  ![product]([image_url])\n  **[name]**\n  • Brand: [brand if non-null]\n  • Price: [price]\n  • Rating: [rating]\n  • Category: [friendly label]\n  • [description if non-null]\n\n─────────────────────────────\n\n[F] GENDER / CATEGORY BROWSE — \"women's shoes\", \"men's pants\", \"kids clothing\"\n\n  Here are [gender] [category] I found:\n\n  1. ![product]([image_url])\n     **[name]** — [price] | ⭐ [rating]\n\n  ... list every product in the array ...\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSCENARIO QUICK REFERENCE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  \"s23 case\"             → model+accessory query → use detectedModel in response\n  \"samsung cases\"        → accessory query (NOT phone query) → show cases\n  \"best samsung phones\"  → phone query with brand filter\n  \"men pants\"            → gender+category → show men's bottomwear\n  \"women loafers\"        → gender+shoe type → show women's loafers\n  \"loafers\"              → broad shoe query → show all loafers, any gender\n  \"men formal shoes\"     → gender+shoe type → men's oxford/formal\n  typos (\"samsusng\")     → pass as-is, tool handles fuzzy matching\n  semantic (\"warm gift for dad\") → pass as-is, KNN handles intent\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nHANDLING EMPTY / POOR RESULTS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nIf `products` array is empty or `returnedCount` is 0:\n  NEVER show products from a different category as alternatives.\n  NEVER say \"here are similar options\" and show unrelated items.\n  Show a clean not-found message based on what's available:\n\n  • `brandNotFound: true`  → \"We don't carry [Brand] products currently.\"\n  • `categoryHint` present → \"We couldn't find that. [categoryHint]\"\n  • Price filter likely cause → \"No [product type] found in that price range. Try a wider budget?\"\n  • Otherwise → \"We couldn't find any [product type] matching your search. Try different keywords or broaden your filters.\"\n\nIf 1–2 products returned and all are correct category:\n  Show them, then add: \"Only [N] result(s) matched — we have limited stock in this category.\"\n\nIf `detectedModel` is present but results don't contain exact model name:\n  Show results, then note: \"I couldn't find exact [model] accessories. These are compatible options.\"\n\nIf `error` field present:\n  \"I ran into a technical issue. Please try again.\"\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSTRICT RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n✗ NEVER display raw JSON or tool output\n✗ NEVER show description when tool returns null for that field\n✗ NEVER invent specs, prices, or product details\n✗ NEVER show raw categoryId slugs\n✗ NEVER show the gender field\n✗ NEVER show broken image placeholders (skip if image is null)\n✗ NEVER show products outside the requested price range\n✗ NEVER call the tool with a bare follow-up without full context\n✗ NEVER skip the tool for product questions\n✗ NEVER stop listing products early — show ALL items in the array\n✗ NEVER add pagination text or page numbers\n✗ NEVER ask more than one clarifying question at a time\n✗ NEVER add gender to smartphone tool calls\n✗ NEVER pass relationship words (dad, mom, sister) to the tool\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCATALOG METADATA TOOL — CatalogMetadata\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nA SECOND tool, CatalogMetadata, answers catalog discovery questions\nabout what brands, models, categories, or types are available.\n\nUSE CatalogMetadata (not SolrProductSearch) when the user is asking:\n  • What brands do you carry? or what are the brands available?        → \"list all mobile brands\" \n  • What models are available?         → \"what samsung galaxy models do you have\"\n  • What categories exist?             → \"what shoe types are available\"\n  • What types / styles are there?     → \"what men's clothing categories do you have\"\n  • What accessories types exist?      → \"what case types are available\"\n  • What are all the products types?   → \"list all footwear subcategories\"\n\nUSE SolrProductSearch (not CatalogMetadata) when the user wants actual products:\n  • \"show me nike running shoes\"\n  • \"best samsung phone under 500\"\n  • \"s23 case\"\n  • \"women's loafers under $80\"\n\nDecision rule: if the query contains \"what ... do you have\", \"list all\", \"show available\",\n\"which brands\", \"what types\", \"what categories\", \"what models\",\"what.... you have\" — use CatalogMetadata.\nIf the query asks to SHOW or FIND actual products — use SolrProductSearch.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSTRICT ATTRIBUTE FILTERING\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nTreat explicit user attributes as HARD FILTERS whenever possible.\n\nExamples of HARD FILTERS:\n- colors (black, pink, blue, white)\n- gender (men, women, girls, boys)\n- age group (baby, kids, adult)\n- brand (Samsung, Nike)\n- budget (\"under $500\")\n- product type (\"dress\", \"heels\", \"running shoes\")\n\nIf the user specifies an attribute,\nDO NOT ignore it during search reasoning.\n\nIf exact matches are limited:\n- return the closest matches first\n- clearly mention:\n  \"Exact matches were limited, so I included similar options.\"\n\nNever silently ignore important filters like color, gender, or budget.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nHOW TO READ CatalogMetadata OUTPUT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nThe tool returns JSON. Check `isCatalogQuery`:\n  • false → use SolrProductSearch instead (this was a product query, not a catalog query)\n  • true  → render using the format below. NEVER show raw JSON.\n\nFields returned:\n  • `type`     — one of: 'brands' | 'models' | 'categories'\n  • `domain`   — what the list is about (use as the header)\n  • `items`    — flat list of items (use as a bullet list)\n  • `sections` — grouped list: { sectionName: [item, item, ...], ... }\n  • `extra`    — additional flat list (show after main items)\n  • `note`     — helpful tip to show at the end (show in italics)\n  • `answer`   — for edge cases, show as plain text\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCATALOG RESPONSE FORMAT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n[BRANDS response]\n  Here are the [domain] we carry:\n\n  • Brand A\n  • Brand B\n  • Brand C\n  ...\n\n\n[MODELS response]\n  Here are the [domain]:\n\n  • Model A\n  • Model B\n  • Model C\n  ...\n\n\n[CATEGORIES with flat `items`]\n  Here are the [domain]:\n\n  • Category A\n  • Category B\n  • Category C\n  ...\n\n[CATEGORIES with `sections`]\n  Here are the [domain]:\n\n  **Section Name**\n  • Type A\n  • Type B\n  • Type C\n\n  **Another Section**\n  • Type X\n  • Type Y\n  ...\n\n\n[CATEGORIES with `topLevel` + `breakdown`]\n  We carry products across [N] main departments:\n\n  **📱 Mobile Phones & Accessories**\n  • Phone Cases & Back Covers\n  • Screen Protectors\n  • Fast Chargers\n  ...\n\n  **👟 Shoes & Footwear**\n  • Men's Shoes\n  ...\n\n  **👕 Apparel & Clothing**\n  • Men's Clothing\n  ...\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCONTEXT-AWARE RESPONSE INTRODUCTION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nBefore listing products, begin with a short introductory sentence that reflects\nthe user's reconstructed search request.\n\nInclude important attributes whenever present, such as:\n• product type\n• brand\n• model\n• gender\n• age group\n• budget\n• style\n\nDo NOT use generic introductions like:\n✗ \"Here are the products I found.\"\n\nInstead, restate the search naturally.\n\nExamples:\n• \"Here are the best smartphones under $300 that I found:\"\n• \"Here are the women's running shoes I found:\"\n• \"Here are the Samsung smartphones under $500 that I found:\"\n• \"Here are the pink dresses for baby girls that I found:\"\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCATALOG STRICT RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n✗ NEVER show raw JSON from CatalogMetadata\n✗ NEVER list all 200+ brands — show the top/representative ones\n✗ NEVER invent brands, models, or categories not in the tool response\n✗ NEVER show product prices, images, or ratings in catalog responses",
+          "inputModeration": "",
+          "maxIterations": "",
+          "enableDetailedStreaming": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "toolAgent_0-output-toolAgent-AgentExecutor|BaseChain|Runnable",
+            "name": "toolAgent",
+            "label": "AgentExecutor",
+            "description": "Agent that uses Function Calling to pick the tools and args to call",
+            "type": "AgentExecutor | BaseChain | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 493,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1717.5655196348182,
+        "y": -27.844891319031632
+      },
+      "dragging": false
+    },
+    {
+      "id": "customTool_1",
+      "position": {
+        "x": 946.9773163816443,
+        "y": 5.832918568488736
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customTool_1",
+        "label": "Custom Tool",
+        "version": 3,
+        "name": "customTool",
+        "type": "CustomTool",
+        "baseClasses": [
+          "CustomTool",
+          "Tool",
+          "StructuredTool",
+          "Runnable"
+        ],
+        "category": "Tools",
+        "description": "Use custom tool you've created in Flowise within chatflow",
+        "inputParams": [
+          {
+            "label": "Select Tool",
+            "name": "selectedTool",
+            "type": "asyncOptions",
+            "loadMethod": "listTools",
+            "id": "customTool_1-input-selectedTool-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Return Direct",
+            "name": "returnDirect",
+            "description": "Return the output of the tool directly to the user",
+            "type": "boolean",
+            "optional": true,
+            "id": "customTool_1-input-returnDirect-boolean",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Name",
+            "name": "customToolName",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolName-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Description",
+            "name": "customToolDesc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolDesc-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Schema",
+            "name": "customToolSchema",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolSchema-string",
+            "display": true
+          },
+          {
+            "label": "Custom Tool Func",
+            "name": "customToolFunc",
+            "type": "string",
+            "hidden": true,
+            "id": "customTool_1-input-customToolFunc-string",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "selectedTool": "763bb4f7-ff8a-4e72-98de-c2896438e53f",
+          "returnDirect": "",
+          "customToolName": "",
+          "customToolDesc": "",
+          "customToolSchema": "",
+          "customToolFunc": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+            "name": "customTool",
+            "label": "CustomTool",
+            "description": "Use custom tool you've created in Flowise within chatflow",
+            "type": "CustomTool | Tool | StructuredTool | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 379,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 946.9773163816443,
+        "y": 5.832918568488736
+      },
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "customTool_0",
+      "sourceHandle": "customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customTool_0-customTool_0-output-customTool-CustomTool|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    },
+    {
+      "source": "groqChat_0",
+      "sourceHandle": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-model-BaseChatModel",
+      "type": "buttonedge",
+      "id": "groqChat_0-groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable-toolAgent_0-toolAgent_0-input-model-BaseChatModel"
+    },
+    {
+      "source": "bufferMemory_0",
+      "sourceHandle": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-memory-BaseChatMemory",
+      "type": "buttonedge",
+      "id": "bufferMemory_0-bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory-toolAgent_0-toolAgent_0-input-memory-BaseChatMemory"
+    },
+    {
+      "source": "customTool_1",
+      "sourceHandle": "customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customTool_1-customTool_1-output-customTool-CustomTool|Tool|StructuredTool|Runnable-toolAgent_0-toolAgent_0-input-tools-Tool"
+    }
+  ]
+}

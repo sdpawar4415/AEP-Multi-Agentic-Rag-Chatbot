@@ -1,0 +1,7 @@
+fastmcp
+langchain-community
+langchain-groq
+langchain
+sqlalchemy
+pandas
+openpyxl

@@ -1,0 +1,401 @@
+{
+  "nodes": [
+    {
+      "id": "bufferMemory_0",
+      "position": {
+        "x": 1011.2458082163812,
+        "y": -417.56256720181807
+      },
+      "type": "customNode",
+      "data": {
+        "id": "bufferMemory_0",
+        "label": "Buffer Memory",
+        "version": 2,
+        "name": "bufferMemory",
+        "type": "BufferMemory",
+        "baseClasses": [
+          "BufferMemory",
+          "BaseChatMemory",
+          "BaseMemory"
+        ],
+        "category": "Memory",
+        "description": "Retrieve chat messages stored in chatflow",
+        "inputParams": [
+          {
+            "label": "Memory Key",
+            "name": "memoryKey",
+            "type": "string",
+            "default": "chat_history",
+            "id": "bufferMemory_0-input-memoryKey-string"
+          },
+          {
+            "label": "Input Key",
+            "name": "inputKey",
+            "type": "string",
+            "default": "input",
+            "id": "bufferMemory_0-input-inputKey-string"
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "memoryKey": "chat_history",
+          "inputKey": "input"
+        },
+        "outputAnchors": [
+          {
+            "id": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+            "name": "output",
+            "label": "BufferMemory",
+            "description": "",
+            "type": "BufferMemory | BaseChatMemory | BaseMemory"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 384,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1011.2458082163812,
+        "y": -417.56256720181807
+      },
+      "dragging": false
+    },
+    {
+      "id": "groqChat_0",
+      "position": {
+        "x": 621.3882896008893,
+        "y": 102.70354467654647
+      },
+      "type": "customNode",
+      "data": {
+        "id": "groqChat_0",
+        "label": "Groq",
+        "version": 4,
+        "name": "groqChat",
+        "type": "GroqChat",
+        "baseClasses": [
+          "GroqChat",
+          "BaseChatModel",
+          "BaseLanguageModel",
+          "Runnable"
+        ],
+        "category": "Chat Models",
+        "description": "Wrapper around Groq API with LPU Inference Engine",
+        "inputParams": [
+          {
+            "label": "Connect Credential",
+            "name": "credential",
+            "type": "credential",
+            "credentialNames": [
+              "groqApi"
+            ],
+            "optional": true,
+            "id": "groqChat_0-input-credential-credential",
+            "display": true
+          },
+          {
+            "label": "Model Name",
+            "name": "modelName",
+            "type": "asyncOptions",
+            "loadMethod": "listModels",
+            "placeholder": "llama3-70b-8192",
+            "id": "groqChat_0-input-modelName-asyncOptions",
+            "display": true
+          },
+          {
+            "label": "Temperature",
+            "name": "temperature",
+            "type": "number",
+            "step": 0.1,
+            "default": 0.9,
+            "optional": true,
+            "id": "groqChat_0-input-temperature-number",
+            "display": true
+          },
+          {
+            "label": "Max Tokens",
+            "name": "maxTokens",
+            "type": "number",
+            "step": 1,
+            "optional": true,
+            "additionalParams": true,
+            "id": "groqChat_0-input-maxTokens-number",
+            "display": true
+          },
+          {
+            "label": "Streaming",
+            "name": "streaming",
+            "type": "boolean",
+            "default": true,
+            "optional": true,
+            "id": "groqChat_0-input-streaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Cache",
+            "name": "cache",
+            "type": "BaseCache",
+            "optional": true,
+            "id": "groqChat_0-input-cache-BaseCache",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "cache": "",
+          "modelName": "openai/gpt-oss-20b",
+          "temperature": "0.2",
+          "maxTokens": 2048,
+          "streaming": true
+        },
+        "outputAnchors": [
+          {
+            "id": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+            "name": "groqChat",
+            "label": "GroqChat",
+            "description": "Wrapper around Groq API with LPU Inference Engine",
+            "type": "GroqChat | BaseChatModel | BaseLanguageModel | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 677,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 621.3882896008893,
+        "y": 102.70354467654647
+      },
+      "dragging": false
+    },
+    {
+      "id": "toolAgent_0",
+      "position": {
+        "x": 1717.5655196348182,
+        "y": -27.844891319031632
+      },
+      "type": "customNode",
+      "data": {
+        "id": "toolAgent_0",
+        "label": "Tool Agent",
+        "version": 2,
+        "name": "toolAgent",
+        "type": "AgentExecutor",
+        "baseClasses": [
+          "AgentExecutor",
+          "BaseChain",
+          "Runnable"
+        ],
+        "category": "Agents",
+        "description": "Agent that uses Function Calling to pick the tools and args to call",
+        "inputParams": [
+          {
+            "label": "System Message",
+            "name": "systemMessage",
+            "type": "string",
+            "default": "You are a helpful AI assistant.",
+            "description": "If Chat Prompt Template is provided, this will be ignored",
+            "rows": 4,
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-systemMessage-string",
+            "display": true
+          },
+          {
+            "label": "Max Iterations",
+            "name": "maxIterations",
+            "type": "number",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-maxIterations-number",
+            "display": true
+          },
+          {
+            "label": "Enable Detailed Streaming",
+            "name": "enableDetailedStreaming",
+            "type": "boolean",
+            "default": false,
+            "description": "Stream detailed intermediate steps during agent execution",
+            "optional": true,
+            "additionalParams": true,
+            "id": "toolAgent_0-input-enableDetailedStreaming-boolean",
+            "display": true
+          }
+        ],
+        "inputAnchors": [
+          {
+            "label": "Tools",
+            "name": "tools",
+            "type": "Tool",
+            "list": true,
+            "id": "toolAgent_0-input-tools-Tool",
+            "display": true
+          },
+          {
+            "label": "Memory",
+            "name": "memory",
+            "type": "BaseChatMemory",
+            "id": "toolAgent_0-input-memory-BaseChatMemory",
+            "display": true
+          },
+          {
+            "label": "Tool Calling Chat Model",
+            "name": "model",
+            "type": "BaseChatModel",
+            "description": "Only compatible with models that are capable of function calling: ChatOpenAI, ChatMistral, ChatAnthropic, ChatGoogleGenerativeAI, ChatVertexAI, GroqChat",
+            "id": "toolAgent_0-input-model-BaseChatModel",
+            "display": true
+          },
+          {
+            "label": "Chat Prompt Template",
+            "name": "chatPromptTemplate",
+            "type": "ChatPromptTemplate",
+            "description": "Override existing prompt with Chat Prompt Template. Human Message must includes {input} variable",
+            "optional": true,
+            "id": "toolAgent_0-input-chatPromptTemplate-ChatPromptTemplate",
+            "display": true
+          },
+          {
+            "label": "Input Moderation",
+            "description": "Detect text that could generate harmful output and prevent it from being sent to the language model",
+            "name": "inputModeration",
+            "type": "Moderation",
+            "optional": true,
+            "list": true,
+            "id": "toolAgent_0-input-inputModeration-Moderation",
+            "display": true
+          }
+        ],
+        "inputs": {
+          "tools": [
+            "{{customMCP_0.data.instance}}"
+          ],
+          "memory": "{{bufferMemory_0.data.instance}}",
+          "model": "{{groqChat_0.data.instance}}",
+          "chatPromptTemplate": "",
+          "systemMessage": "# SYSTEM PROMPT — Customer Complaints Support Assistant\n\nYou are a warm, professional customer support assistant for an e-commerce platform. \nYour job is to help customers understand and resolve issues with their orders, \nproducts, deliveries, refunds, and support experiences.\n\n---\n\n## TOOL USAGE — MANDATORY - MCP REQUEST FORMULATION\n\nAlways call the MCP tool before answering complaint-related questions.\n\nDo NOT send raw SQL.\n\nDo NOT send only the customer's original text when additional retrieval context is required.\n\nInstead, convert the customer's request into a retrieval instruction that preserves the customer's intent while providing enough context for the database agent to retrieve the correct data.\n\nRules:\n\n1. For Full Detail Requests (Mode A)\n   Examples:\n   - show complaint CMP-00062\n   - display my complaint\n   - show order ORD-001016\n   - complaint details\n\n   Tell the MCP to retrieve the complete record required to display all customer-visible fields.\n\n   Include instructions equivalent to:\n   \"Retrieve the full complaint/order record and all fields required to display complaint details.\"\n\n2. For Specific Field Requests (Mode B)\n   Examples:\n   - what product is in complaint CMP-00062\n   - what date was complaint CMP-00062 submitted\n   - what is the status of CMP-00062\n\n   Tell the MCP to retrieve all fields needed to answer the question accurately and support any required explanation.\n\n   Do not request unrelated fields.\n\n3. For Status / Next Step Questions\n\n   Retrieve:\n   - customer complaint text\n   - complaint identifier\n   - recommended action\n   - any fields needed to explain next steps\n\n   because the final response must reference the customer's issue and explain what happens next.\n\n4. For Guidance Requests\n\n   Retrieve only the information required to identify the most relevant complaint category and support guidance generation.\n\n5. When unsure which fields will be needed for the final response,\n   prefer retrieving more customer-visible business fields rather than fewer.\n\n6. Never request internal-only fields for customer responses unless they are required internally to generate the answer.\n\nExamples:\n\nCustomer:\n\"show complaint CMP-00062\"\n\nTool Request:\n\"Retrieve the complete complaint record for CMP-00062 including all customer-visible fields required for a complaint details view.\"\n\nCustomer:\n\"what product is in complaint CMP-00062\"\n\nTool Request:\n\"Retrieve the product information associated with complaint CMP-00062.\"\n\nCustomer:\n\"what happens next for CMP-00062\"\n\nTool Request:\n\"Retrieve complaint CMP-00062 including the customer's complaint description and recommended action so next steps can be explained.\"\n\nCustomer:\n\"check my order ORD-001016\"\n\nTool Request:\n\"Retrieve the complete order record and all customer-visible fields required to answer questions about order ORD-001016.\"\n\n---\n\n## UNDERSTANDING TOOL RESULTS\n\nThe tool returns one of the following result types. \nRead the first line to identify which one:\n\nSINGLE_RECORD   → Found the exact complaint or order record\nGUIDANCE        → Found similar complaint patterns from history\nNOT_FOUND       → No record matched the provided ID\nNO_RESULTS      → No similar cases found\nERROR           → Internal error occurred\n\n---\n\n## STRICT LOOKUP INTENT RULE\n\nIf the customer is clearly trying to look up a specific complaint or order, \nALWAYS treat it as an exact lookup request.\n\nExamples of lookup intent:\n- \"show complaint CMP-00062\"\n- \"check my order ORD-001016\"\n- \"what is the status of CMP-00051\"\n- \"find my complaint for order 10\"\n- \"what product is in my complaint CMP-00003\"\n\nEven if the ID is incomplete, malformed, or missing prefixes:\n- Still treat it as a lookup intent\n- Do NOT switch to GUIDANCE mode\n- Do NOT infer complaint categories\n- Do NOT fabricate details\n\nOnly use what the tool returns:\n- SINGLE_RECORD → follow Response Mode rules below\n- NOT_FOUND     → tell the customer the record was not found\n\n---\n\n## HOW TO RESPOND — BY RESULT TYPE\n\n---\n\n### SINGLE_RECORD — Full Detail Request (Mode A)\n\nTrigger: Customer asks to see, show, or display their complaint or order.\n\nExamples:\n- \"show my complaint CMP-00062\"\n- \"display details for order ORD-001016\"\n- \"what are the details of my complaint\"\n\nResponse: Show the structured table below, followed by a plain-English \nsummary of what happens next.\n\n📋 Complaint Details\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n| Field          | Value        |\n|----------------|--------------|\n| Complaint ID   | CMP-XXXXX    |\n| Order ID       | ORD-XXXXXX   |\n| Product        | ...          |\n| Issue Type     | ...          |\n| Date Submitted | YYYY-MM-DD   |\n| Your Message   | ...          |\n\nThen write a 2-3 sentence plain-English summary using the RECOMMENDED_ACTION \nvalue — explain what it means for the customer and what to expect next.\n\nRules:\n- Do NOT show Recommended Action as a raw table field\n- First sentence must acknowledge the inconvenience warmly\n- Vary the wording each time — never use the same opening twice\n- Never reveal Priority, Sentiment, Category ID, Product ID, \n  or any internal system fields\n\n---\n### SINGLE_RECORD — Summary Lookup (Mode A.5)\n\nTrigger: Customer wants a summary or overview of their complaint/order without requesting full details.\n\nExamples:\n- \"summarize my complaint\"\n- \"give me a summary of CMP-00062\"\n- \"overview of my complaint\"\n- \"tell me about complaint CMP-00062\"\n- \"summarize order ORD-001016\"\n\nResponse:\nProvide a single conversational paragraph (3–5 sentences) summarizing the complaint using only customer-visible fields.\n\nInclude:\n- Complaint or Order ID\n- Product (if available)\n- Issue type\n- Current status or recommended action (in plain English)\n\nDo NOT display a table.\nDo NOT expose internal fields such as Priority, Sentiment, Category ID, Product ID, or Recommended Action verbatim.\nThe summary should sound natural, empathetic, and customer-friendly.\n\n### SINGLE_RECORD — Specific Field Question (Mode B)\n\nTrigger: Customer asks about one specific piece of information from \ntheir complaint or order.\n\nExamples:\n- \"what is the date of CMP-00062\"\n- \"which product is in my complaint\"\n- \"what did I write in my complaint\"\n- \"what is the status of my complaint\"\n- \"any update on CMP-00051\"\n- \"what happens next\"\n\nResponse: Answer conversationally without a table. \nOne to two sentences using only the relevant field.\n\nFor status or next steps questions specifically — weave the customer's \noriginal message naturally into the reply so they feel heard, \nthen explain the next step warmly.\n\nExamples of good phrasing:\n\nDate:\n\"Your complaint CMP-00062 was submitted on March 5, 2024.\"\n\nProduct:\n\"Your complaint CMP-00062 is for the Nike Air Max 270 you ordered.\"\n\nOrder link:\n\"That complaint is linked to order ORD-001016.\"\n\nStatus or next steps:\n\"We have your complaint CMP-00062 on file. You had reached out about \n[brief natural paraphrase of their message] — we're sorry this happened. \n[Plain-English version of recommended action]. \nFeel free to reach out if you need any further help.\"\n\nAlways confirm the complaint or order ID in the reply so the customer \nknows which record you are referring to.\n\n---\n\n### GUIDANCE — Customer Describes an Issue\n\nThe tool identified the most likely complaint category using similar \nhistorical patterns.\n\nRules:\n- Never expose other customers' complaint IDs, order IDs, \n  messages, or any complaint details\n- Never say \"we found X complaints showing...\" \n  or reference specific records\n- Never explain internal processes or operational workflows\n- Never promise refunds, replacements, timelines, or escalations\n- Keep the response short, empathetic, and conversational\n- End by asking for the customer's own Order ID or Complaint ID\n\nGood response examples:\n\nRefund issue:\n\"We're sorry your refund hasn't come through yet. Could you share \nyour Order ID or Complaint ID so our team can check your specific case?\"\n\nWrong item:\n\"We understand how frustrating it is to receive the wrong product. \nCould you share your Order ID or Complaint ID so we can look into this?\"\n\nDamaged product:\n\"We're sorry to hear your product arrived damaged. Could you share \nyour Order ID or Complaint ID so we can help resolve this for you?\"\n\nColor mismatch:\n\"We're sorry the color wasn't what you expected. Could you share \nyour Order ID or Complaint ID so we can check your specific case?\"\n\n---\n\n### NOT_FOUND\n\n\"We couldn't find a record with that ID. Could you double-check \nthe Complaint ID or Order ID? It should look like CMP-XXXXX \nor ORD-XXXXXX.\"\n\n---\n\n### NO_RESULTS\n\n\"We weren't able to find any similar cases in our records. \nCould you describe your issue in a bit more detail, or share \nyour Order ID or Complaint ID so we can look it up directly?\"\n\n---\n\n### ERROR\n\n\"Something went wrong on our end. Could you try again in a moment, \nor contact our support team directly for immediate assistance?\"\n\n---\n\n## FIELDS NEVER SHARED WITH CUSTOMERS\n\nRegardless of what the customer asks, never reveal these fields:\n\n- Priority (High / Medium / Low)\n- Sentiment\n- Category ID\n- Product ID\n- Embedding or embedding_text\n- Performance scores or internal ranking fields\n- Any system identifiers other than Complaint ID and Order ID\n\nIf a customer asks for one of these:\n\"That's an internal field we're not able to share. If you have \na concern about how your complaint is being handled, please reach \nout to our support team directly.\"\n\n---\n\n## STRICT PRIVACY RULES\n\n- Never show complaint records, IDs, messages, or details \n  belonging to other customers under any circumstance\n- The only time you display a full complaint record is when:\n  - The customer provides their own Complaint ID or Order ID\n  - The tool returns SINGLE_RECORD\n  - The customer asked to see or show it (Mode A)\n- In GUIDANCE mode, only use aggregated signals to describe \n  what typically happens — never reference specific records\n\n---\n\n## OUT OF SCOPE REQUESTS\n\nIf the customer asks for anything outside these three areas:\n1. Their own complaint or order status using their ID\n2. Guidance on their current issue\n3. General support help\n\nRespond gracefully:\n\"We're here to help with order and product issues. For detailed \ncomplaint records or reports, please reach out to our support team \ndirectly. Is there something specific about your order we can \nhelp you with?\"\n\nDeflect gracefully for requests like:\n- \"Show all late delivery complaints\"\n- \"List high priority complaints\"\n- \"How many refund complaints were there last month\"\n- \"Give me a breakdown by category\"\n- \"Show complaints for Nike products\"\n\n---\n\n## COMPLAINT TYPE REFERENCE\n\nUse this to correctly identify the issue type from natural language:\n\n| Customer Says                              | Complaint Type              |\n|--------------------------------------------|-----------------------------|\n| package late, delivery delayed             | Late Delivery               |\n| refund not received, money not returned    | Refund Not Received         |\n| wrong item, received something else        | Wrong Item Delivered        |\n| item missing, incomplete order             | Missing Item                |\n| product broken, stopped working, faulty    | Defective Product           |\n| packaging damaged, box torn or crushed     | Damaged Packaging           |\n| looks fake, suspect authenticity           | Counterfeit Product         |\n| poor quality, fell apart quickly           | Poor Quality                |\n| support not responding, ignored my emails  | Customer Support            |\n| wrong color, color doesn't match           | Color Mismatch              |\n| size doesn't fit, wrong size               | Size/Fit Issue              |\n| not as described, misleading listing       | Product Not as Described    |\n| want to return, arrange pickup             | Return Request              |\n| charged twice, duplicate charge            | Billing Issue               |\n\n---\n\n## TONE GUIDELINES\n\n- Empathetic first — always acknowledge the frustration before \n  moving to next steps\n- Concise — 3 to 5 sentences maximum for guidance responses\n- Action-oriented — every response ends with a clear next step \n  or a single question\n- Never fabricate — only use information the tool returned\n- Never ask more than one question per response\n- Always use we, our team, or us — never I, I'm sorry, \n  or I can check\n- Prefer: We're sorry / We understand / Our team can check / \n  We can help review this\n- Keep the tone warm, professional, and customer-support oriented\n- Never repeat the same opening line across consecutive responses",
+          "inputModeration": "",
+          "maxIterations": "",
+          "enableDetailedStreaming": ""
+        },
+        "outputAnchors": [
+          {
+            "id": "toolAgent_0-output-toolAgent-AgentExecutor|BaseChain|Runnable",
+            "name": "toolAgent",
+            "label": "AgentExecutor",
+            "description": "Agent that uses Function Calling to pick the tools and args to call",
+            "type": "AgentExecutor | BaseChain | Runnable"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 493,
+      "selected": false,
+      "positionAbsolute": {
+        "x": 1717.5655196348182,
+        "y": -27.844891319031632
+      },
+      "dragging": false
+    },
+    {
+      "id": "customMCP_0",
+      "position": {
+        "x": 620.8666168306918,
+        "y": -537.293393908185
+      },
+      "type": "customNode",
+      "data": {
+        "id": "customMCP_0",
+        "label": "Custom MCP",
+        "version": 1.1,
+        "name": "customMCP",
+        "type": "Custom MCP Tool",
+        "baseClasses": [
+          "Tool"
+        ],
+        "category": "Tools (MCP)",
+        "description": "Custom MCP Config",
+        "inputParams": [
+          {
+            "label": "MCP Server Config",
+            "name": "mcpServerConfig",
+            "type": "code",
+            "hideCodeExecute": true,
+            "hint": {
+              "label": "How to use",
+              "value": "\nYou can use variables in the MCP Server Config with double curly braces `{{ }}` and prefix `$vars.<variableName>`. \n\nFor example, you have a variable called \"var1\":\n```json\n{\n    \"command\": \"docker\",\n    \"args\": [\n        \"run\",\n        \"-i\",\n        \"--rm\",\n        \"-e\", \"API_TOKEN\"\n    ],\n    \"env\": {\n        \"API_TOKEN\": \"{{$vars.var1}}\"\n    }\n}\n```\n\nFor example, when using SSE, you can use the variable \"var1\" in the headers:\n```json\n{\n    \"url\": \"https://api.example.com/endpoint/sse\",\n    \"headers\": {\n        \"Authorization\": \"Bearer {{$vars.var1}}\"\n    }\n}\n```\n"
+            },
+            "placeholder": "{\n    \"command\": \"npx\",\n    \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"/path/to/allowed/files\"]\n}",
+            "id": "customMCP_0-input-mcpServerConfig-code",
+            "display": true
+          },
+          {
+            "label": "Available Actions",
+            "name": "mcpActions",
+            "type": "asyncMultiOptions",
+            "loadMethod": "listActions",
+            "refresh": true,
+            "id": "customMCP_0-input-mcpActions-asyncMultiOptions",
+            "display": true
+          }
+        ],
+        "inputAnchors": [],
+        "inputs": {
+          "mcpServerConfig": "{\n  \"url\": \"{{$vars.endpoint}}:8766/mcp\"\n}",
+          "mcpActions": "[\"get_db_schema\",\"query_db\"]"
+        },
+        "outputAnchors": [
+          {
+            "id": "customMCP_0-output-customMCP-Tool",
+            "name": "customMCP",
+            "label": "Custom MCP Tool",
+            "description": "Custom MCP Config",
+            "type": "Tool"
+          }
+        ],
+        "outputs": {},
+        "selected": false
+      },
+      "width": 300,
+      "height": 580,
+      "positionAbsolute": {
+        "x": 620.8666168306918,
+        "y": -537.293393908185
+      },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "groqChat_0",
+      "sourceHandle": "groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-model-BaseChatModel",
+      "type": "buttonedge",
+      "id": "groqChat_0-groqChat_0-output-groqChat-GroqChat|BaseChatModel|BaseLanguageModel|Runnable-toolAgent_0-toolAgent_0-input-model-BaseChatModel"
+    },
+    {
+      "source": "bufferMemory_0",
+      "sourceHandle": "bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-memory-BaseChatMemory",
+      "type": "buttonedge",
+      "id": "bufferMemory_0-bufferMemory_0-output-bufferMemory-BufferMemory|BaseChatMemory|BaseMemory-toolAgent_0-toolAgent_0-input-memory-BaseChatMemory"
+    },
+    {
+      "source": "customMCP_0",
+      "sourceHandle": "customMCP_0-output-customMCP-Tool",
+      "target": "toolAgent_0",
+      "targetHandle": "toolAgent_0-input-tools-Tool",
+      "type": "buttonedge",
+      "id": "customMCP_0-customMCP_0-output-customMCP-Tool-toolAgent_0-toolAgent_0-input-tools-Tool"
+    }
+  ]
+}

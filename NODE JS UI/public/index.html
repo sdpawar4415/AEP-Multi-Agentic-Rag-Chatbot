@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AEP eCommerce Assistant</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    /* ========================= CSS (mirrors Streamlit styles) ========================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f6;
+      color: #1F2937;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ---- SIDEBAR ---- */
+    #sidebar {
+      width: 340px;
+      min-width: 340px;
+      background: #ffffff;
+      border-right: 1px solid #E2E8F0;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    #sidebar h2 { font-size: 16px; font-weight: 700; color: #1F2937; }
+    #sidebar .sidebar-sub { font-size: 13px; color: #525252; }
+    #sidebar .section-title { font-size: 14px; font-weight: 600; color: #374151; margin-top: 8px; }
+    .info-box {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: #1D4ED8;
+    }
+    .sidebar-divider { border: none; border-top: 1px solid #E2E8F0; margin: 4px 0; }
+    .log-count { font-size: 13px; color: #374151; }
+
+    #btn-clear {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #B91C1C;
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      width: 100%;
+      text-align: left;
+    }
+    #btn-clear:hover { background: #FEE2E2; }
+
+    .show-logs-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151; }
+    .show-logs-row input[type="checkbox"] { cursor: pointer; }
+
+    #logs-panel {
+      background: #F9FAFB;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 10px;
+      max-height: 380px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .log-entry {
+      background: #fff;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    .product-img {
+    width: 180px;
+    max-width: 180px;
+    height: auto;
+    border-radius: 12px;
+    margin: 8px 0;
+    border: 1px solid #E5E7EB;
+    background: #fff;
+    display: block;
+    object-fit: contain;
+    }
+
+    .bot-content img {
+      width: 180px !important;
+      max-width: 180px !important;
+      height: auto !important;
+      border-radius: 12px;
+      border: 1px solid #E5E7EB;
+      display: block;
+      margin-top: 10px;
+      object-fit: contain;
+    }
+
+    .log-entry strong { color: #111827; }
+
+    .session-label { font-size: 11px; color: #6B7280; word-break: break-all; }
+
+    #dashboard-page {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ---- MAIN ---- */
+    #main {
+      flex: 1;
+      width: 100%;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      overflow-y: auto;
+      max-height: 100vh;
+    }
+
+    .main-title { font-size: 34px; font-weight: 700; color: #1F2937; }
+    .sub-title { font-size: 15px; color: #525252; }
+
+    /* ---- METRICS ---- */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      width: 100%;
+    }
+    .metric-card {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+    .metric-label { font-size: 12px; color: #6B7280; margin-bottom: 4px; }
+    .metric-value { font-size: 24px; font-weight: 700; color: #1F2937; }
+
+    .divider { border: none; border-top: 1px solid #E2E8F0; }
+
+    /* ---- ROUTING POLICY ---- */
+    .routing-box {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .routing-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .routing-box p { font-size: 14px; color: #525252; line-height: 1.6; }
+
+    /* ---- CONVERSATION ---- */
+    #conversation-section {
+      width: 100%;
+    }
+    #conversation-section h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+
+    #chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    /* mirrors .user-msg */
+    .user-msg {
+      background-color: #DBEAFE;
+      padding: 14px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .user-msg b { font-weight: 700; }
+    /* mirrors .bot-msg */
+    .bot-msg {
+      background-color: #FFFFFF;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      margin-bottom: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    /* mirrors .flow-chip */
+    .flow-chip {
+      display: inline-block;
+      background: #E0F2FE;
+      color: #0369A1;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+      margin-right: 4px;
+    }
+    /* mirrors .status-chip */
+    .status-chip {
+      display: inline-block;
+      background: #ECFDF5;
+      color: #166534;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+    /* mirrors .small-text */
+    .small-text { font-size: 12px; color: #6B7280; margin-top: 6px; }
+
+    /* ---- SUGGESTED QUESTIONS ---- */
+    .suggestions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .suggestion-chip {
+      background: #F8FAFC;
+      border: 1px solid #CBD5E1;
+      color: #334155;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+    .suggestion-chip:hover {
+      background: #EFF6FF;
+      border-color: #93C5FD;
+      color: #1D4ED8;
+    }
+
+    /* ---- CHAT INPUT ---- */
+    #chat-input-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+      position: sticky;
+      bottom: 0;
+      background: #f0f2f6;
+      padding: 12px 0 4px;
+    }
+    #chat-input {
+      flex: 1;
+      border: 1px solid #D1D5DB;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+      color: #1F2937;
+      resize: none;
+      height: 48px;
+      line-height: 1.4;
+    }
+    #chat-input:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px #BFDBFE55; }
+    #send-btn {
+      background: #2563EB;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 0 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      height: 48px;
+      white-space: nowrap;
+    }
+    #send-btn:hover { background: #1D4ED8; }
+    #send-btn:disabled { background: #93C5FD; cursor: not-allowed; }
+
+    /* ---- SPINNER ---- */
+    .spinner-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      font-size: 13px;
+      color: #6B7280;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 3px solid #E5E7EB;
+      border-top-color: #2563EB;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ---- MARKDOWN-LIKE ---- */
+    .bot-content p { margin-bottom: 6px; }
+    .bot-content ul { padding-left: 18px; margin-bottom: 6px; }
+    .bot-content ol { padding-left: 18px; margin-bottom: 6px; }
+    .bot-content li { margin-bottom: 3px; }
+    .bot-content strong { font-weight: 600; }
+
+    .bot-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background: white;
+    }
+
+    .bot-content th,
+    .bot-content td {
+      border: 1px solid #D1D5DB;
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .bot-content th {
+      background: #F3F4F6;
+      font-weight: 600;
+    }
+
+    .bot-content tr:nth-child(even) {
+      background: #FAFAFA;
+    }
+
+    .mobile-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #mobile-log-btn {
+      display: none;
+      border: none;
+      background: #ffffff;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      font-size: 24px;
+      font-weight: 700;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+    }
+
+    #mobile-sidebar-overlay {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      #dashboard-page {
+        width: 100%;
+      }
+
+      #mobile-log-btn {
+        display: block;
+      }
+
+      #sidebar {
+        display: flex;
+        position: fixed;
+        top: 0;
+        left: -310px;
+        width: 300px;
+        min-width: 300px;
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+      }
+
+      #sidebar.mobile-open {
+        left: 0;
+      }
+
+      #mobile-sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+        z-index: 999;
+      }
+
+      #mobile-sidebar-overlay.active {
+        display: block;
+      }
+
+      #main {
+        padding: 16px;
+        width: 100%;
+      }
+
+      .metrics-row {
+        flex-wrap: wrap;
+      }
+
+      .metric-card {
+        min-width: calc(50% - 8px);
+      }
+
+      .main-title {
+        font-size: 34px;
+      }
+    }
+
+    #app-home-page {
+      min-height: 100vh;
+      background: #F3F4F6;
+      padding-bottom: 90px;
+    }
+
+    .app-placeholder {
+      min-height: calc(100vh - 90px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-placeholder h1 {
+      font-size: 36px;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .app-placeholder p {
+      color: #6B7280;
+      font-size: 16px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 74px;
+      background: #FFFFFF;
+      border-top: 1px solid #E5E7EB;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .nav-item {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #111827;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+    }
+
+    .nav-item span {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .nav-item.active {
+      color: #2563EB;
+    }
+
+    .nav-chatbot-icon {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 10%;
+      background: white;
+      padding: 1px;
+    }
+
+    /* ---- LANDING PAGE ---- */
+    #landing-page {
+      min-height: 100vh;
+      width: 100%;
+      background:
+        radial-gradient(circle at left, #EEF4FF 0%, #FFFFFF 40%),
+        linear-gradient(180deg, #F8FBFF 0%, #FFFFFF 100%);
+      color: #111827;
+    }
+
+    .landing-header {
+      height: 70px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-img {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .brand-subtitle {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    .landing-hero {
+      min-height: calc(100vh - 70px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-image: radial-gradient(#E5E7EB 1px, transparent 1px);
+      background-size: 24px 24px;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .badge {
+      color: #2563EB;
+      background: #EAF2FF;
+      border: 1px solid #BFDBFE;
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+
+    .welcome-text {
+      font-size: 22px;
+      color: #6B7280;
+      margin-bottom: 16px;
+    }
+
+    .landing-hero h1 {
+      font-size: 72px;
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: -2px;
+      color: #111827;
+      margin-bottom: 24px;
+    }
+
+    .landing-hero h1 span {
+      color: #3B73F6;
+    }
+
+    .hero-subtitle {
+      font-size: 21px;
+      line-height: 1.4;
+      color: #6B7280;
+      margin-bottom: 40px;
+    }
+
+    #signin-btn {
+      background: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 44px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    }
+
+    #signin-btn:hover {
+      background: #1D4ED8;
+    }
+
+    @media (max-width: 768px) {
+      .landing-hero h1 {
+        font-size: 42px;
+      }
+
+      .hero-subtitle {
+        font-size: 16px;
+      }
+    }
+
+    .market-top-tabs {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      overflow-x: auto;
+      padding: 10px 0 16px;
+    }
+
+    .tab {
+      background: white;
+      border: 1px solid #E5E7EB;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .active-blue {
+      background: #2563EB;
+      color: white;
+    }
+
+    .market-hero {
+      height: 260px;
+      border-radius: 0 0 18px 18px;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,.25)),
+        url("https://images.unsplash.com/photo-1542291026-7eec264c27ff") center/cover;
+      display: flex;
+      align-items: flex-end;
+      padding: 32px;
+      color: white;
+      margin-bottom: 24px;
+    }
+
+    .market-hero h2 {
+      font-size: 34px;
+      margin-bottom: 6px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0 14px;
+    }
+
+    .section-head h3 {
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .section-head p,
+    .featured-head span {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    .category-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .category-card {
+      height: 160px;
+      border-radius: 16px;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.12);
+    }
+
+    .category-card span {
+      font-size: 28px;
+      margin-bottom: auto;
+    }
+
+    .category-card h3 {
+      font-size: 20px;
+    }
+
+    .category-card p {
+      font-size: 13px;
+    }
+
+    .category-card.shoes {
+      background:
+        linear-gradient(90deg, rgba(249,115,22,.95), rgba(249,115,22,.65)),
+        url("https://images.unsplash.com/photo-1542291026-7eec264c27ff") center/cover;
+    }
+
+    .category-card.mobile {
+      background:
+        linear-gradient(90deg, rgba(14,165,233,.85), rgba(14,165,233,.55)),
+        url("https://images.unsplash.com/photo-1511707171634-5f897ff02aa9") center/cover;
+    }
+
+    .category-card.apparel {
+      background:
+        linear-gradient(90deg, rgba(219,39,119,.85), rgba(219,39,119,.55)),
+        url("https://images.unsplash.com/photo-1445205170230-053b83016050") center/cover;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #E5E7EB;
+      overflow: hidden;
+      box-shadow: 0 5px 14px rgba(0,0,0,.06);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background: #F3F4F6;
+    }
+
+    .product-body {
+      padding: 14px;
+    }
+
+    .product-body small {
+      color: #6B7280;
+      font-size: 11px;
+    }
+
+    .product-body h4 {
+      font-size: 15px;
+      color: #111827;
+      margin: 6px 0;
+      min-height: 40px;
+    }
+
+    .product-body p {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    .product-body b {
+      display: block;
+      margin: 12px 0;
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .product-body b span {
+      font-size: 11px;
+      color: #2563EB;
+    }
+
+    .product-body button {
+      width: 100%;
+      border: 1px solid #CBD5E1;
+      background: #F8FAFC;
+      border-radius: 8px;
+      padding: 9px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .market-hero {
+        height: 210px;
+        padding: 22px;
+      }
+
+      .market-hero h2 {
+        font-size: 26px;
+      }
+
+      .category-row {
+        grid-template-columns: 1fr;
+      }
+
+      .product-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-card img {
+        height: 220px;
+      }
+    }
+
+    #app-home-page {
+      width: 100%;
+      min-height: 100vh;
+      background: #F3F4F6;
+      padding: 0 0 90px 0;
+    }
+
+    .app-placeholder {
+      min-height: auto;
+      display: block;
+      width: 100%;
+      padding: 0;
+    }
+
+    .app-placeholder > div {
+      width: 100%;
+    }
+
+    .clear-chat-btn {
+      background: #FEF2F2;
+      color: #B91C1C;
+      border: 1px solid #FECACA;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .ai-welcome-card{
+      background:#ffffff;
+      border-radius:24px;
+      padding:28px;
+      margin-bottom:24px;
+      box-shadow:0 4px 14px rgba(0,0,0,0.05);
+      border:1px solid #E5E7EB;
+    }
+
+    .ai-badge{
+      display:inline-block;
+      background:#EEF4FF;
+      color:#2563EB;
+      padding:8px 16px;
+      border-radius:999px;
+      font-weight:600;
+      margin-bottom:18px;
+    }
+
+    .ai-welcome-card h2{
+      font-size:32px;
+      margin-bottom:14px;
+      color:#111827;
+    }
+
+    .ai-welcome-card p{
+      color:#6B7280;
+      font-size:18px;
+      margin-bottom:18px;
+    }
+
+    .ai-help-grid{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-bottom:24px;
+    }
+
+    .ai-help-grid span{
+      background:#F3F4F6;
+      padding:10px 16px;
+      border-radius:12px;
+      font-weight:500;
+    }
+
+    .ai-question{
+      font-size:20px;
+      font-weight:700;
+      color:#2563EB;
+    }
+
+    @media(max-width:768px){
+      .ai-welcome-card{
+        padding:20px;
+      }
+
+      .ai-welcome-card h2{
+        font-size:24px;
+      }
+
+      .ai-question{
+        font-size:18px;
+      }
+    }
+
+    .market-top-tabs {
+      padding: 12px 24px;
+      background: #fff;
+    }
+
+    .market-hero {
+      width: 100%;
+      height: 260px;
+      border-radius: 0;
+      margin-bottom: 24px;
+    }
+
+    .section-head {
+      padding: 0 24px;
+    }
+
+    .category-row {
+      padding: 0 24px;
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    .product-grid {
+      padding: 0 24px 40px;
+    }
+
+    @media (max-width: 768px) {
+      .category-row {
+        grid-template-columns: 1fr;
+      }
+
+      .market-hero {
+        height: 220px;
+      }
+    }
+
+    .sidebar-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+
+    .sidebar-metric-card {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 8px 10px;
+      min-height: 64px;
+    }
+
+    .sidebar-metric-card span {
+      display: block;
+      font-size: 11px;
+      color: #6B7280;
+      margin-bottom: 3px;
+    }
+
+    .sidebar-metric-card b {
+      font-size: 18px;
+      color: #111827;
+    }
+
+    .back-home-btn {
+      background: #FFFFFF;
+      border: 1px solid #CBD5E1;
+      color: #2563EB;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .back-home-btn:hover {
+      background: #EFF6FF;
+    }
+
+    /* ---- PIPELINE TRAIL ---- */
+    .pipeline-trail {
+      font-size: 11px;
+      color: #6B7280;
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 5px 9px;
+      margin-top: 8px;
+      word-break: break-word;
+      line-height: 1.7;
+    }
+    .pipeline-text {
+      font-size: 11px;
+      color: #374151;
+      word-break: break-word;
+      line-height: 1.6;
+    }
+    /* ---- NODE STEPS (blue dot list) ---- */
+    .node-steps-list {
+      border-top: 1px solid #F3F4F6;
+      padding-top: 6px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .node-step {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .step-num {
+      background: #E0E7FF;
+      color: #3730A3;
+      border-radius: 999px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-name {
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.5;
+    }
+    .step-preview {
+      font-size: 10px;
+      color: #6B7280;
+      font-style: italic;
+      width: 100%;
+      padding-left: 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+
+<div id="landing-page">
+  <header class="landing-header">
+    <div class="brand">
+      <img src="/assets/logo.jpeg" class="logo-img" alt="Aziro Logo">
+      <div>
+        <div class="brand-title">Aziro</div>
+        <div class="brand-subtitle">Rewards Marketplace</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="landing-hero">
+    <div class="badge">⚡ Turn Points into Possibilities</div>
+
+    <p class="welcome-text">Welcome to <b>Aziro</b></p>
+
+    <h1>
+      Redeem Your Points,<br />
+      <span>Unlock Rewards</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      From dream vacations to everyday essentials. Your rewards points<br />
+      deserve the best rewards.
+    </p>
+
+    <button id="signin-btn">➜ Sign In</button>
+  </section>
+</div>
+
+<div id="app-home-page" style="display:none;">
+  <div class="app-placeholder">
+    <h1 id="app-section-title">Home</h1>
+    <p>This section is available for demo navigation.</p>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item" onclick="showSection('Home')">⌂<span>Home</span></button>
+    <button class="nav-item" onclick="showSection('Profile')">👤<span>Profile</span></button>
+    <button class="nav-item" onclick="showSection('Cart')">🛒<span>Cart</span></button>
+    <button class="nav-item" onclick="showSection('Category')">☰<span>Category</span></button>
+    <button class="nav-item active" onclick="openAepAI()"><img src="/assets/symbol.jpg" class="nav-chatbot-icon" /><span>AEP Assist</span></button>
+  </nav>
+</div>
+
+<div id="dashboard-page" style="display:none;">
+
+<!-- ========================= SIDEBAR ========================= -->
+<aside id="sidebar">
+  <h2>🚀 AEP Agent Monitoring Console</h2>
+  <p class="sidebar-sub">Enterprise-ready workflow monitoring and execution audit logs.</p>
+
+  <div class="sidebar-metrics">
+    <div class="sidebar-metric-card">
+      <span>Total Queries</span>
+      <b id="m-total">0</b>
+    </div>
+
+    <div class="sidebar-metric-card">
+      <span>Successful Runs</span>
+      <b id="m-success">0</b>
+    </div>
+
+    <div class="sidebar-metric-card">
+      <span>Failed Runs</span>
+      <b id="m-failed">0</b>
+    </div>
+
+    <div class="sidebar-metric-card">
+      <span>Last Used Tool</span>
+      <b id="m-last-tool">N/A</b>
+    </div>
+  </div>
+
+  <hr class="sidebar-divider"/>
+  <p class="section-title">### Active routing</p>
+  <div class="info-box">Master Agentflow routing is active</div>
+
+  <hr class="sidebar-divider"/>
+  <p class="section-title">### Execution log</p>
+  <p class="log-count">Executed queries: <strong id="sb-exec-count">0</strong></p>
+
+  <button id="btn-clear">Clear session &amp; logs</button>
+
+  <div class="show-logs-row">
+    <input type="checkbox" id="chk-show-logs" checked/>
+    <label for="chk-show-logs">Show detailed logs</label>
+  </div>
+
+  <div id="logs-panel">
+    <p style="font-size:13px;color:#6B7280;">No executions yet.</p>
+  </div>
+
+  <hr class="sidebar-divider"/>
+  <p class="section-title">### Session</p>
+  <p class="session-label" id="session-id-label">—</p>
+</aside>
+<div id="mobile-sidebar-overlay"></div>
+
+<!-- ========================= MAIN ========================= -->
+<main id="main">
+  <div class="mobile-title-row">
+    <button id="mobile-log-btn">⋮</button>
+    <button id="back-home-btn" class="back-home-btn">← Home</button>
+    <div class="main-title">🛍️ AEP AI Assistant</div>
+  </div>
+  <div class="sub-title">Automatic RAG flow routing with audit-grade execution logs.</div>
+
+  <hr class="divider"/>
+
+  <div class="ai-welcome-card">
+    <div class="ai-badge">🤖 AEP AI Assistant</div>
+
+    <h2>Hello there 👋</h2>
+
+    <p>
+      I’m your intelligent eCommerce support assistant.
+      I can help you with:
+    </p>
+
+    <div class="ai-help-grid">
+      <span>📦 Orders</span>
+      <span>🔄 Refunds</span>
+      <span>🚚 Shipping</span>
+      <span>🛒 Products</span>
+      <span>📝 Complaints</span>
+      <span>💳 Payments</span>
+    </div>
+
+    <div class="ai-question">
+      How can I help you today?
+    </div>
+  </div>
+
+  <!-- CONVERSATION -->
+  <div id="conversation-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <h3>Conversation</h3>
+      <button id="clear-chat-btn" class="clear-chat-btn">Clear Chat</button>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="spinner" style="display:none;" class="spinner-row">
+      <div class="spinner"></div>
+      <span id="spinner-msg">Thinking...</span>
+    </div>
+  </div>
+
+  <!-- CHAT INPUT -->
+  <div id="chat-input-row">
+    <textarea
+      id="chat-input"
+      placeholder="Enter your enterprise eCommerce query..."
+      rows="1"
+    ></textarea>
+    <button id="send-btn">Send</button>
+  </div>
+</main>
+
+</div>
+
+<!-- ========================= JS ========================= -->
+<script>
+  // ---- LANDING PAGE LOGIC ----
+  document.getElementById("signin-btn").addEventListener("click", () => {
+    document.getElementById("landing-page").style.display = "none";
+    document.getElementById("app-home-page").style.display = "block";
+    document.getElementById("dashboard-page").style.display = "none";
+
+    showSection("Home");
+  });
+
+  const sections = {
+    Home: {
+      subtitle: "Discover products and rewards across categories.",
+      html: `
+        <div class="market-top-tabs">
+          <span class="tab active" onclick="showSection('Home')">🏠</span>
+
+          <span class="tab active-blue" onclick="showSection('Merchandise')">
+            Merchandise
+          </span>
+
+          <span class="tab" onclick="showSection('Gift Cards')">
+            Gift Cards
+          </span>
+
+          <span class="tab" onclick="showSection('Travel')">
+            Travel
+          </span>
+
+          <span class="tab" onclick="showSection('Car Rentals')">
+            Car Rentals
+          </span>
+
+          <span class="tab" onclick="showSection('EventHub')">
+            EventHub
+          </span>
+
+          <span class="tab" onclick="showSection('Dining')">
+            Dining
+          </span>
+
+          <span class="tab" onclick="showSection('PayHub')">
+            PayHub
+          </span>
+
+          <span class="tab" onclick="showSection('Charity')">
+            Charity
+          </span>
+        </div>
+
+        <div class="market-hero">
+          <div>
+            <h2>New Arrivals Daily</h2>
+            <p>Discover the latest products added to our catalog</p>
+          </div>
+        </div>
+
+        <div class="section-head">
+          <div>
+            <h3>Browse Categories</h3>
+            <p>Discover products by category</p>
+          </div>
+        </div>
+
+        <div class="category-row">
+
+          <div class="category-card shoes"
+               onclick="showSection('Shoes')">
+            <span>👟</span>
+            <h3>Shoes</h3>
+            <p>Footwear for every occasion</p>
+          </div>
+
+          <div class="category-card mobile"
+               onclick="showSection('Mobile & Accessories')">
+            <span>📱</span>
+            <h3>Mobile & Accessories</h3>
+            <p>Smartphones and gadgets</p>
+          </div>
+
+          <div class="category-card apparel"
+               onclick="showSection('Apparel')">
+            <span>👕</span>
+            <h3>Apparel</h3>
+            <p>Fashion & Style</p>
+          </div>
+
+        </div>
+
+      `
+    },
+
+    Profile: {
+      html: `
+        <div class="app-placeholder">
+          <h1>👤 Profile</h1>
+          <p>User profile dashboard coming soon.</p>
+        </div>
+      `
+    },
+
+    Cart: {
+      html: `
+        <div class="app-placeholder">
+          <h1>🛒 Cart</h1>
+          <p>Your selected reward products will appear here.</p>
+        </div>
+      `
+    },
+
+    Category: {
+      html: `
+        <div class="app-placeholder">
+          <h1>☰ Categories</h1>
+          <p>Browse all reward marketplace categories.</p>
+        </div>
+      `
+    },
+
+    Shoes: {
+      html: `
+        <div class="app-placeholder">
+          <h1>👟 Shoes</h1>
+          <p>Explore footwear collection.</p>
+        </div>
+      `
+    },
+
+    "Mobile & Accessories": {
+      html: `
+        <div class="app-placeholder">
+          <h1>📱 Mobile & Accessories</h1>
+          <p>Explore smartphones and gadgets.</p>
+        </div>
+      `
+    },
+
+    Apparel: {
+      html: `
+        <div class="app-placeholder">
+          <h1>👕 Apparel</h1>
+          <p>Explore fashion and clothing collection.</p>
+        </div>
+      `
+    },
+
+    Merchandise: {
+      html: `
+        <div class="app-placeholder">
+          <h1>🎁 Merchandise</h1>
+          <p>Reward merchandise collection.</p>
+        </div>
+      `
+    },
+
+    "Gift Cards": {
+      html: `
+        <div class="app-placeholder">
+          <h1>🎫 Gift Cards</h1>
+          <p>Gift card rewards available here.</p>
+        </div>
+      `
+    },
+
+    Travel: {
+      html: `
+        <div class="app-placeholder">
+          <h1>✈ Travel</h1>
+          <p>Travel reward options available.</p>
+        </div>
+      `
+    },
+
+    "Car Rentals": {
+      html: `
+        <div class="app-placeholder">
+          <h1>🚗 Car Rentals</h1>
+          <p>Rental rewards available.</p>
+        </div>
+      `
+    },
+
+    EventHub: {
+      html: `
+        <div class="app-placeholder">
+          <h1>🎉 EventHub</h1>
+          <p>Events and experiences section.</p>
+        </div>
+      `
+    },
+
+    Dining: {
+      html: `
+        <div class="app-placeholder">
+          <h1>🍽 Dining</h1>
+          <p>Dining rewards and offers.</p>
+        </div>
+      `
+    },
+
+    PayHub: {
+      html: `
+        <div class="app-placeholder">
+          <h1>💳 PayHub</h1>
+          <p>Payment and wallet rewards.</p>
+        </div>
+      `
+    },
+
+    Charity: {
+      html: `
+        <div class="app-placeholder">
+          <h1>❤️ Charity</h1>
+          <p>Donate reward points to charity.</p>
+        </div>
+      `
+    }
+  };
+
+  function showSection(sectionName) {
+
+    document.getElementById("dashboard-page").style.display = "none";
+    document.getElementById("app-home-page").style.display = "block";
+
+    const appPlaceholder = document.querySelector(".app-placeholder");
+
+    if (sections[sectionName]) {
+      appPlaceholder.innerHTML = sections[sectionName].html;
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    const navButtons = document.querySelectorAll(".nav-item");
+
+    navButtons.forEach(btn => {
+      if (btn.innerText.includes(sectionName)) {
+        btn.classList.add("active");
+      }
+    });
+  }
+
+  function openAepAI() {
+    document.getElementById("app-home-page").style.display = "none";
+    document.getElementById("dashboard-page").style.display = "flex";
+  }
+
+  const mobileLogBtn = document.getElementById("mobile-log-btn");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("mobile-sidebar-overlay");
+
+  mobileLogBtn.addEventListener("click", () => {
+    sidebar.classList.add("mobile-open");
+    overlay.classList.add("active");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("mobile-open");
+    overlay.classList.remove("active");
+  });
+
+  document.getElementById("back-home-btn").addEventListener("click", () => {
+    document.getElementById("dashboard-page").style.display = "none";
+    document.getElementById("app-home-page").style.display = "block";
+    showSection("Home");
+  });
+
+  // ---- STATE ----
+  let state = { session_id: "", messages: [], execution_log: [] };
+
+  // ---- INIT ----
+  async function loadState() {
+    const res = await fetch("/api/state");
+    state = await res.json();
+    renderAll();
+  }
+
+  // ---- RENDER ALL ----
+  function renderAll() {
+    renderMetrics();
+    renderMessages();
+    renderSidebar();
+  }
+
+  // ---- METRICS ----
+  function renderMetrics() {
+    const log = state.execution_log;
+    const total = log.length;
+    const success = log.filter(l => l.status === "Completed").length;
+    const failed = log.filter(l => l.status === "Error").length;
+    const lastTool = log.length > 0 ? log[log.length - 1].used_tool : "N/A";
+
+    document.getElementById("m-total").textContent = total;
+    document.getElementById("m-success").textContent = success;
+    document.getElementById("m-failed").textContent = failed;
+    document.getElementById("m-last-tool").textContent = lastTool;
+  }
+
+  // ---- MESSAGES ----
+  function renderMessages() {
+    const container = document.getElementById("chat-messages");
+    container.innerHTML = "";
+
+    for (const msg of state.messages) {
+      if (msg.role === "user") {
+        container.innerHTML += `
+          <div class="user-msg">
+            <b>You:</b><br>${escHtml(msg.content)}
+            <div class="small-text">${escHtml(msg.time)}</div>
+          </div>`;
+      } else {
+        const usedTool   = msg.used_tool || "";
+        const pipeline   = msg.pipeline  || "";
+        const toolColor  = getToolColor(usedTool);
+        const suggestions = msg.suggested_questions || [];
+        const suggestionsHtml = suggestions.length
+          ? `<div class="suggestions-row">${suggestions.map(q =>
+              `<button type="button" class="suggestion-chip" onclick="askSuggested(this)">${escHtml(q)}</button>`
+            ).join("")}</div>`
+          : "";
+        container.innerHTML += `
+          <div class="bot-msg">
+            <span class="flow-chip">${escHtml(msg.flow || "")}</span>
+            <span class="status-chip" style="background:${toolColor.bg};color:${toolColor.text};">${escHtml(usedTool || "Processing")}</span>
+            ${pipeline ? `<div class="pipeline-trail">🔀 ${escHtml(pipeline)}</div>` : ""}
+            <div class="bot-content" style="margin-top:10px;">${simpleMarkdown(msg.content)}</div>
+            ${suggestionsHtml}
+            <div class="small-text">${escHtml(msg.time)}</div>
+          </div>`;
+      }
+    }
+
+    // scroll to bottom
+    container.scrollIntoView({ behavior: "smooth", block: "end" });
+  }
+
+  // ---- SIDEBAR ----
+  function renderSidebar() {
+    const log = state.execution_log;
+    document.getElementById("sb-exec-count").textContent = log.length;
+    document.getElementById("session-id-label").textContent = state.session_id || "—";
+
+    const panel = document.getElementById("logs-panel");
+    const show = document.getElementById("chk-show-logs").checked;
+
+    if (!show || log.length === 0) {
+      panel.innerHTML = `<p style="font-size:13px;color:#6B7280;">${log.length === 0 ? "No executions yet." : "Logs hidden."}</p>`;
+      return;
+    }
+
+    const recent = [...log].reverse().slice(0, 20);
+    panel.innerHTML = recent.map(e => {
+      const toolColor  = getToolColor(e.used_tool);
+      const statusColor = e.status === "Completed" ? "#166534" : "#991B1B";
+
+      const steps = (e.node_steps || []).map(s => `
+        <div class="node-step">
+          <span class="step-num">${s.step}</span>
+          <span class="step-name">${escHtml(s.node)}</span>
+          ${s.preview ? `<div class="step-preview">${escHtml(s.preview)}</div>` : ""}
+        </div>`).join("");
+
+      return `
+        <div class="log-entry">
+          <strong>${escHtml(e.time)}</strong><br/>
+          <strong>Query:</strong> ${escHtml(e.query)}<br/>
+          <strong>Tool:</strong>
+          <span style="background:${toolColor.bg};color:${toolColor.text};border-radius:999px;padding:1px 8px;font-size:11px;font-weight:600;">${escHtml(e.used_tool)}</span>
+          <span style="color:${statusColor};font-size:11px;margin-left:4px;">${escHtml(e.status)}</span><br/>
+          <strong>Pipeline:</strong><br/>
+          <span class="pipeline-text">${escHtml(e.pipeline)}</span>
+          ${steps ? `<div class="node-steps-list">${steps}</div>` : ""}
+        </div>`;
+    }).join("");
+  }
+
+  // ---- SEND ----
+  // ---- SUGGESTED QUESTION CLICK ----
+  function askSuggested(btnEl) {
+    const question = btnEl.textContent;
+    const input = document.getElementById("chat-input");
+    input.value = question;
+    sendMessage();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById("chat-input");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    state.messages.push({
+      role: "user",
+      content: msg,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    });
+
+    renderMessages();
+    input.value = "";
+    input.style.height = "48px";
+    setLoading(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: msg }),
+      });
+
+      const reader  = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      const msgEl = document.getElementById("spinner-msg");
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop(); // keep incomplete last line
+
+        for (const line of lines) {
+          if (!line.startsWith("data:")) continue;
+          const raw = line.slice(5).trim();
+          if (!raw) continue;
+
+          let parsed;
+          try { parsed = JSON.parse(raw); } catch { continue; }
+
+          if (parsed.type === "node") {
+            // Real-time node update from Flowise — show customer-friendly message
+            msgEl.textContent = parsed.message;
+          }
+
+          if (parsed.type === "done") {
+            state.messages      = parsed.messages;
+            state.execution_log = parsed.execution_log;
+            setLoading(false);
+            renderAll();
+          }
+
+          // Suggestions arrive slightly AFTER the answer (see server.js —
+          // generation is deliberately decoupled so it never delays the
+          // reply itself). Patch the specific message in place and
+          // re-render just the chat, no loading-state change needed.
+          if (parsed.type === "suggestions") {
+            const target = state.messages[parsed.messageIndex];
+            if (target) {
+              target.suggested_questions = parsed.suggested_questions;
+              renderMessages();
+            }
+          }
+
+          if (parsed.type === "error") {
+            console.error("Stream error:", parsed.message);
+            setLoading(false);
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  }
+
+  // ---- CLEAR ----
+  document.getElementById("btn-clear").addEventListener("click", async () => {
+    const res = await fetch("/api/clear", { method: "POST" });
+    const data = await res.json();
+    state = { session_id: data.session_id, messages: [], execution_log: [] };
+    renderAll();
+  });
+
+  document.getElementById("clear-chat-btn").addEventListener("click", async () => {
+    const res = await fetch("/api/clear", { method: "POST" });
+    const data = await res.json();
+    state = { session_id: data.session_id, messages: [], execution_log: [] };
+    renderAll();
+  });
+
+  // ---- SHOW LOGS TOGGLE ----
+  document.getElementById("chk-show-logs").addEventListener("change", () => {
+    renderSidebar();
+  });
+
+  // ---- SEND BUTTON ----
+  document.getElementById("send-btn").addEventListener("click", sendMessage);
+
+  // ---- ENTER KEY (like st.chat_input) ----
+  document.getElementById("chat-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  // ---- LOADING STATE ----
+  function setLoading(loading) {
+    document.getElementById("send-btn").disabled = loading;
+    document.getElementById("spinner").style.display = loading ? "flex" : "none";
+    if (loading) {
+      document.getElementById("spinner-msg").textContent = "Reviewing your request.";
+    }
+  }
+
+  // ---- HELPERS ----
+  function escHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  // Very simple markdown → HTML (bold, bullet, newlines)
+  function simpleMarkdown(text) {
+  return marked.parse(text || "");
+  }
+  // ---- TOOL COLOR MAP ----
+  function getToolColor(tool) {
+    const map = {
+      // Tools
+      "SolrProductSearch":        { bg: "#EDE9FE", text: "#6D28D9" },
+      "PolicyInfo":               { bg: "#FEF9C3", text: "#854D0E" },
+      "ComplaintSearch":          { bg: "#FEE2E2", text: "#991B1B" },
+      "HumanHandoff":             { bg: "#FFE4E6", text: "#9F1239" },
+      "FAQ":                      { bg: "#EFF6FF", text: "#1D4ED8" },
+      "WarrantySearch":           { bg: "#F0FDF4", text: "#15803D" },
+      "Order MCP":                { bg: "#F5F3FF", text: "#6D28D9" },
+      // New V2 nodes
+      "Intent Detector":          { bg: "#E0F2FE", text: "#0369A1" },
+      "Custom Tool Call":         { bg: "#F0FDFA", text: "#0F766E" },
+      "Response Generation":      { bg: "#FDF4FF", text: "#7E22CE" },
+      // Flow outcomes
+      "Cache Hit":                { bg: "#D1FAE5", text: "#065F46" },
+      "Greeting":                 { bg: "#F0FDF4", text: "#15803D" },
+      "Blocked":                  { bg: "#FEF2F2", text: "#B91C1C" },
+      // Utility nodes
+      "Cache Lookup":             { bg: "#DCFCE7", text: "#166534" },
+      "Cache Extract Answer":     { bg: "#D1FAE5", text: "#065F46" },
+      "Cache Write":              { bg: "#BBF7D0", text: "#14532D" },
+      "Input Guardrail 1":        { bg: "#FEF3C7", text: "#92400E" },
+      "Input Guardrail 2":        { bg: "#FEF9C3", text: "#854D0E" },
+      "Guardrail Router":         { bg: "#F3F4F6", text: "#374151" },
+      "Guardrail 2 Router":       { bg: "#F3F4F6", text: "#374151" },
+      "Output Guardrail":         { bg: "#FFF7ED", text: "#9A3412" },
+      "Guardrail LLM":            { bg: "#F3F4F6", text: "#374151" },
+      "Direct Reply (Greeting)":  { bg: "#F0FDF4", text: "#15803D" },
+      "Direct Reply (Blocked)":   { bg: "#FEF2F2", text: "#B91C1C" },
+      "Direct Reply (Cache Hit)": { bg: "#ECFDF5", text: "#065F46" },
+    };
+    return map[tool] || { bg: "#ECFDF5", text: "#166534" };
+  }
+
+  // ---- BOOT ----
+  loadState();
+</script>
+</body>
+</html>
