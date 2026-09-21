@@ -385,7 +385,7 @@
         ],
         "inputs": {
           "cache": "",
-          "modelName": "llama-3.3-70b-versatile",
+          "modelName": "openai/gpt-oss-20b",
           "temperature": "0.2",
           "maxTokens": "500",
           "streaming": true

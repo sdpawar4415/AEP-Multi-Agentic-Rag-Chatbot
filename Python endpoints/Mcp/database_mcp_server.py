@@ -1,5 +1,5 @@
 """
-generic_mcp_server.py
+database_mcp_server.py
 ----------------------
 Generic MCP server — works with ANY SQLite database.
 Uses streamable-http transport (Flowise compatible).
@@ -11,37 +11,40 @@ Install:
 Run on Windows (PowerShell):
     $env:DB_PATH = "complaints.db"
     $env:GROQ_API_KEY = "gsk_your_key_here"
-    python generic_mcp_server.py
+    python database_mcp_server.py
+
+Run multiple databases on different ports:
+    # Terminal 1 — complaints server
+    $env:DB_PATH = "complaints.db"
+    $env:MCP_PORT = "8766"
+    $env:GROQ_API_KEY = "gsk_your_key_here"
+    python database_mcp_server.py
+
+    # Terminal 2 — orders server
+    $env:DB_PATH = "orders.db"
+    $env:MCP_PORT = "8767"
+    $env:GROQ_API_KEY = "gsk_your_key_here"
+    python database_mcp_server.py
 
 Flowise Custom MCP node config:
     { "url": "http://192.168.29.88:8766/mcp" }
-
-# Terminal 1 — complaints server
-$env:DB_PATH = "complaints.db"
-$env:MCP_PORT = "8766"
-$env:GROQ_API_KEY = "gsk_your_key_here"
-python database_mcp_server.py
-
-# Terminal 2 — orders server
-$env:DB_PATH = "orders.db"
-$env:MCP_PORT = "8767"
-$env:GROQ_API_KEY = "gsk_your_key_here"
-python database_mcp_server.py
 """
 
 import os
 import sqlite3
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from fastmcp import FastMCP
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit, create_sql_agent
 from langchain_core.callbacks import BaseCallbackHandler
+from langchain_core.agents import AgentAction
 from langchain_groq import ChatGroq
 
 DB_PATH = Path(os.environ.get("DB_PATH", "complaints.db"))
-PORT = int(os.environ.get("MCP_PORT", 8766))
+PORT    = int(os.environ.get("MCP_PORT", 8766))
 
 print(f"[INFO] Connecting to {DB_PATH}...")
 
@@ -50,7 +53,7 @@ _db = SQLDatabase.from_uri(
     sample_rows_in_table_info=3,
 )
 _llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
+    model="openai/gpt-oss-120b",
     temperature=0,
     groq_api_key=os.environ["GROQ_API_KEY"],
 )
@@ -58,12 +61,11 @@ _toolkit = SQLDatabaseToolkit(db=_db, llm=_llm)
 _agent   = create_sql_agent(
     llm=_llm,
     toolkit=_toolkit,
-    agent_type="zero-shot-react-description",
+    agent_type="tool-calling",
     verbose=True,
     handle_parsing_errors=True,
     max_iterations=10,
     max_execution_time=30,
-    # return_intermediate_steps goes in agent_executor_kwargs, NOT as a top-level arg
     agent_executor_kwargs={"return_intermediate_steps": True},
 )
 
@@ -71,23 +73,26 @@ _tables = _db.get_usable_table_names()
 print(f"[INFO] Agent ready. Tables: {_tables}")
 
 
-# ── Callback — fires exactly when sql_db_query tool is called ─────────────────
+# ── Callback ──────────────────────────────────────────────────────────────────
 class SQLCaptureCallback(BaseCallbackHandler):
     """
-    Captures the SQL and data at the moment sql_db_query is invoked.
-    More reliable than parsing intermediate_steps after the fact.
+    Captures the SQL and rows when sql_db_query is called.
+
+    With tool-calling agent:
+      - on_tool_start: receives SQL via 'inputs' kwarg as dict {"query": "SELECT ..."}
+      - on_agent_action: receives AgentAction where tool_input is also a dict
+
+    With zero-shot-react agent (fallback):
+      - on_tool_start: receives SQL as plain string in input_str
     """
     def __init__(self):
         self.sql_used = ""
         self.data     = []
 
-    def on_tool_start(self, serialized: dict, input_str: str, **kwargs):
-        tool_name = serialized.get("name", "")
-        if tool_name != "sql_db_query":
-            return
-
-        # Clean the SQL — MRKL parser sometimes appends Observation/Thought lines
-        sql = input_str.strip()
+    def _extract_and_run(self, sql: str):
+        """Clean SQL and execute it to capture structured rows."""
+        sql = sql.strip()
+        # Strip stray text that MRKL parser sometimes appends
         for stop in ["\nObservation:", "\nThought:", "\nAction:"]:
             if stop in sql:
                 sql = sql[:sql.index(stop)]
@@ -97,20 +102,53 @@ class SQLCaptureCallback(BaseCallbackHandler):
             return
 
         self.sql_used = sql
-        print(f"[CALLBACK] sql_db_query called with: {sql[:100]}")
+        print(f"[CALLBACK] Executing: {sql[:120]}")
 
-        # Re-run against SQLite to get structured rows
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         try:
-            rows      = conn.execute(sql).fetchall()
-            self.data = [dict(r) for r in rows]
+            self.data = [dict(r) for r in conn.execute(sql).fetchall()]
             print(f"[CALLBACK] Captured {len(self.data)} rows")
         except sqlite3.Error as e:
             print(f"[CALLBACK] SQL error: {e}")
             self.data = []
         finally:
             conn.close()
+
+    def on_tool_start(
+        self,
+        serialized: dict,
+        input_str: str,
+        *,
+        inputs: dict | None = None,   # tool-calling passes SQL here as {"query": "SELECT..."}
+        **kwargs
+    ):
+        if serialized.get("name") != "sql_db_query":
+            return
+
+        # tool-calling agent: SQL is in inputs dict under "query" key
+        if inputs and isinstance(inputs, dict):
+            sql = inputs.get("query", "") or inputs.get("input", "") or input_str
+        else:
+            # zero-shot-react agent: SQL is the plain input_str
+            sql = input_str
+
+        self._extract_and_run(sql)
+
+    def on_agent_action(self, action: AgentAction, **kwargs):
+        """Secondary capture — fires for tool-calling agent with structured tool_input."""
+        if action.tool != "sql_db_query":
+            return
+        # For tool-calling: tool_input is a dict {"query": "SELECT ..."}
+        # For zero-shot-react: tool_input is a plain string
+        if isinstance(action.tool_input, dict):
+            sql = action.tool_input.get("query", "") or action.tool_input.get("input", "")
+        else:
+            sql = str(action.tool_input)
+
+        # Only capture if on_tool_start didn't already get it
+        if sql and not self.sql_used:
+            self._extract_and_run(sql)
 
 
 # ── MCP server ────────────────────────────────────────────────────────────────
@@ -151,12 +189,12 @@ def query_db(question: str) -> dict[str, Any]:
     if q.upper().startswith("SELECT"):
         q = f"Run this query and explain the results: {q}"
 
-    cb = SQLCaptureCallback()   # fresh callback per request
+    cb = SQLCaptureCallback()
 
     try:
         result = _agent.invoke(
             {"input": q},
-            config={"callbacks": [cb]},   # attach callback for this run only
+            config={"callbacks": [cb]},
         )
         answer = result.get("output", "")
 
@@ -169,9 +207,18 @@ def query_db(question: str) -> dict[str, Any]:
         }
 
     except Exception as e:
+        # If callback captured data before error, return partial success
+        if cb.data:
+            return {
+                "status":    "success",
+                "answer":    f"Found {len(cb.data)} results.",
+                "row_count": len(cb.data),
+                "data":      cb.data[:50],
+                "sql_used":  cb.sql_used,
+            }
         return {
             "status":    "error",
-            "answer":    str(e),
+            "answer":    "I had trouble processing that question. Please try rephrasing it.",
             "row_count": 0,
             "data":      [],
             "sql_used":  "",

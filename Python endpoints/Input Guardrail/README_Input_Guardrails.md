@@ -7,7 +7,9 @@ GUARDRAILS/
 ├── guardrails_config/
 │   ├── config.yml
 │   ├── prompts.yml
-│   └── rails.co
+│   ├── rails.co
+│   ├── actions.py
+│   └── .env
 ├── venv/
 ├── .env
 ├── guardrails_server.py
