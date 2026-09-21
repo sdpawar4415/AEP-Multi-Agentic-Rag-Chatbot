@@ -37,7 +37,7 @@ pip install -r requirements.txt
 
 ## .env
 
-Create a `.env` file in the project root (same level as `guardrails_server.py`):
+Create a `.env` file in the project root  (same level as `guardrails_server.py`) and one inside guardrails_config folder:
 
 ```
 GROQ_API_KEY=your_groq_api_key_here
